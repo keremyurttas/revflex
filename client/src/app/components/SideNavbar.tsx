@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 
 const SideNavbar = () => {
-  const path = usePathname().slice(1); // remove the '/'
+  const path = usePathname()?.slice(1); // remove the '/'
   const [value, setValue] = useState(path || "home"); // Use the path or default to "home"
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [showNavbar, setShowNavbar] = useState(false);
@@ -75,8 +75,7 @@ const SideNavbar = () => {
             display: "flex",
             gap: "2rem",
             flexDirection: "column",
-            position: "relative",
-            height: "100vh",
+            height: "100vh", // Full viewport height
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>

@@ -1,5 +1,9 @@
-import SideNavbar from "./components/SideNavbar";
 
-export default function Home() {
-  return <main className=""></main>;
-}
+
+const Page = () => {
+  return (
+    <div>Home page</div>
+  );
+};
+
+export default Page;
