@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex gap-48 bg-[#0d0d0d]">
+      <body className="lg:flex gap-48 bg-[#0d0d0d]">
         <SideNavbar />
         {children}
       </body>
