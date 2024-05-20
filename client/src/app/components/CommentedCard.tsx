@@ -103,7 +103,7 @@ const CommentedCard = () => {
             <Typography
               fontSize={".8rem"}
               fontWeight={400}
-              color={"#8E8E8E"}
+              color={theme.palette.text.primary}
               sx={{
                 display: "-webkit-box",
                 overflow: "hidden",

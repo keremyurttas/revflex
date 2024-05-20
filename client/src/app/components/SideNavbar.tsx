@@ -134,7 +134,7 @@ const SideNavbar = () => {
             sx={{
               "& .Mui-selected": {
                 backgroundColor: "#1F1F1F",
-                color: "#ffff",
+                color: theme.palette.primary.main,
                 borderTopLeftRadius: "10px",
                 borderBottomLeftRadius: "10px", // Custom background color for the active tab
               },
@@ -175,13 +175,7 @@ const SideNavbar = () => {
               href="rated"
             />
           </Tabs>
-          {/* <Divider
-            sx={{
-              opacity: ".7",
-              backgroundColor: "#5C5C5C",
-              height: ".1rem",
-            }}
-          /> */}
+       
           {signedUp ? (
             <Button
               sx={{
@@ -204,7 +198,7 @@ const SideNavbar = () => {
                 />
                 <Box>
                   <Typography variant="h6">Chan Geme</Typography>
-                  <Typography variant="body2" sx={{ color: "#8E8E8E" }}>
+                  <Typography variant="body2" color={theme.palette.text.primary}>
                     @changeme
                   </Typography>
                 </Box>

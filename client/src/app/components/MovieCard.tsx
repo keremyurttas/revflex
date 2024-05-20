@@ -46,7 +46,7 @@ const MovieCard = () => {
           </Typography>
           <Box
             sx={{
-              color: "#8E8E8E",
+              color:theme.palette.text.primary,
               display: "flex",
               alignItems: "center",
               gap: ".2rem",

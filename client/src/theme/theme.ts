@@ -8,6 +8,9 @@ const theme = createTheme({
     secondary: {
       main: "#F33F3F", // Your custom secondary color
     },
+    text:{
+      primary:"#8E8E8E"
+    }
     // You can define other custom colors here
   },
 });
