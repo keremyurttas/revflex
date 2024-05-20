@@ -1,20 +1,27 @@
 "use client";
-import { Box, CardContent, Typography } from "@mui/material";
+import { Box, Button, CardContent, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
-import MovieIcon from '@mui/icons-material/Movie';
-const MovieCard = () => {
+import MovieIcon from "@mui/icons-material/Movie";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+
+interface MovieCardProps {
+  className?: string; // Optional className prop
+  // Add other props as needed
+}
+const MovieCard: React.FC<MovieCardProps> = ({ className }) => {
   return (
     <ThemeProvider theme={theme}>
-      <Card
+      <Box
+        className={className}
         sx={{
           cursor: "pointer",
           width: 200,
           position: "relative",
           height: 400,
-          marginTop: "2rem",
+
           bgcolor: "transparent",
           color: theme.palette.primary.main,
           [theme.breakpoints.down("lg")]: {
@@ -23,7 +30,7 @@ const MovieCard = () => {
           },
           transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
           "&:hover": {
-            transform: "scale(1.05)",
+            transform: "scale(1.02)",
             boxShadow: theme.shadows[5],
           },
         }}
@@ -46,17 +53,33 @@ const MovieCard = () => {
           </Typography>
           <Box
             sx={{
-              color:theme.palette.text.primary,
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: ".2rem",
             }}
           >
-            <MovieIcon sx={{ width: 16, height: 16 }} />
-            <Typography variant="body1">Fantasy</Typography>
+            <Box
+              sx={{
+                color: theme.palette.text.primary,
+                display: "flex",
+                alignItems: "center",
+                gap: ".2rem",
+              }}
+            >
+              <MovieIcon sx={{ width: 16, height: 16 }} />
+              <Typography variant="body1">Fantasy</Typography>
+            </Box>
+            <Button
+              sx={{
+                padding: 0,
+                minWidth: 0,
+              }}
+            >
+              <FavoriteBorderIcon fontSize="small" />
+            </Button>
           </Box>
         </CardContent>
-      </Card>
+      </Box>
     </ThemeProvider>
   );
 };

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
-  variable:'--poppins'
+  variable: "--poppins",
 });
 
 export default function RootLayout({
@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
-      <body className={`lg:flex gap-48 bg-[#0d0d0d]" ${poppins.variable}`}>
+    <html lang="en">
+      <body className={`lg:flex bg-[#0d0d0d]" ${poppins.variable}`}>
         <SideNavbar />
         {children}
       </body>
