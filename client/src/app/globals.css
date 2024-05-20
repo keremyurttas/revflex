@@ -31,3 +31,7 @@ body {
     text-wrap: balance;
   }
 }
+
+* {
+  font-family: var(--poppins) !important;
+}
