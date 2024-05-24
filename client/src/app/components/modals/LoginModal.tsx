@@ -10,7 +10,7 @@ import InputBase from "@mui/material/InputBase";
 import LockIcon from "@mui/icons-material/Lock";
 import Link from "@mui/material/Link";
 import Fade from "@mui/material/Fade";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useGlobalContext } from "@/app/Context/store";
 
 interface LoginModalProps {
@@ -18,8 +18,30 @@ interface LoginModalProps {
   onClose: () => void;
 }
 const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
-  const { setActiveModal } = useGlobalContext();
+  const { setActiveModal, fetchUserDetails } = useGlobalContext();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const handleLogin = async () => {
+    const response = await fetch("http://localhost:8000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+      credentials: "include",
+    });
 
+    if (response.ok) {
+      const data = await response.json();
+      fetchUserDetails();
+    } else {
+      console.error("Login failed:", response.statusText);
+      // Handle failed login
+    }
+  };
   return (
     <ThemeProvider theme={theme}>
       <Modal
@@ -80,6 +102,9 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
                 <InputBase
                   placeholder="Username"
                   sx={{ color: "white" }}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
                 ></InputBase>
               </Box>
               <Box
@@ -104,6 +129,9 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
                   type="password"
                   placeholder="Password"
                   sx={{ color: "white" }}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                 ></InputBase>
               </Box>
               <Link
@@ -117,6 +145,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
 
             <Box sx={{ display: "grid", rowGap: "1rem" }}>
               <Button
+                onClick={handleLogin}
                 variant="contained"
                 color="primary"
                 sx={{
