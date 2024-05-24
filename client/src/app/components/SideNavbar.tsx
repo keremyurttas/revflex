@@ -39,6 +39,18 @@ const SideNavbar = () => {
       setShowNavbar(false); // Hide navbar on small screens
     }
   }, [isLargeScreen]);
+  useEffect(() => {
+    if (showNavbar) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    // Clean up the effect when the component is unmounted
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showNavbar]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -69,15 +81,15 @@ const SideNavbar = () => {
           sx={{
             [theme.breakpoints.down("lg")]: {
               width: "100%",
+              height: "100vh",
             },
-            width: "25%",
+
             background: "#080808",
             paddingX: "4rem",
             paddingY: "2rem",
             display: "flex",
             gap: "2rem",
             flexDirection: "column",
-            height: "100vh", // Full viewport height
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
