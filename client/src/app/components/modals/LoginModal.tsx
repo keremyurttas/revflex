@@ -11,12 +11,15 @@ import LockIcon from "@mui/icons-material/Lock";
 import Link from "@mui/material/Link";
 import Fade from "@mui/material/Fade";
 import { FC } from "react";
+import { useGlobalContext } from "@/app/Context/store";
 
 interface LoginModalProps {
   open: boolean;
   onClose: () => void;
 }
 const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
+  const { setActiveModal } = useGlobalContext();
+
   return (
     <ThemeProvider theme={theme}>
       <Modal
@@ -137,7 +140,17 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
                 sx={{ marginX: "auto" }}
               >
                 Don’t have an account?
-                <Link color={theme.palette.secondary.main}> Sign up</Link>
+                <Link
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  color={theme.palette.secondary.main}
+                  onClick={() => {
+                    setActiveModal("signup");
+                  }}
+                >
+                  Sign up
+                </Link>
               </Typography>
             </Box>
           </Box>

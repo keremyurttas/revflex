@@ -1,8 +1,8 @@
+"use client";
 import { ThemeProvider } from "@emotion/react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import theme from "@/theme/theme";
 import PersonIcon from "@mui/icons-material/Person";
@@ -17,14 +17,15 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
-import { Theme } from "@mui/material/styles";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import { useGlobalContext } from "@/app/Context/store";
 
 interface SignupModalProps {
   open: boolean;
   onClose: () => void;
 }
 const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
+  const { setActiveModal } = useGlobalContext();
   const [stepIndex, setStepIndex] = useState(0);
   const [favGenres, setFavGenres] = useState<string[]>([]);
   const genres = ["action", "horror", "sci-fi"];
@@ -200,6 +201,9 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
             <Link
               sx={{ cursor: "pointer" }}
               color={theme.palette.secondary.main}
+              onClick={() => {
+                setActiveModal("login");
+              }}
             >
               {" "}
               Log in

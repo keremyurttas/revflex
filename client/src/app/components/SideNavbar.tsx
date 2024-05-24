@@ -17,6 +17,7 @@ import InputBase from "@mui/material/InputBase";
 import ListIcon from "@mui/icons-material/List";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
+import { useGlobalContext } from "../Context/store";
 
 const SideNavbar = () => {
   const path = usePathname()?.slice(1); // remove the '/'
@@ -24,7 +25,8 @@ const SideNavbar = () => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [showNavbar, setShowNavbar] = useState(false);
   const [isSlideExitCompleted, setIsSlideExitCompleted] = useState(true);
-  const signedUp = true;
+  const signedUp = false;
+  const { setActiveModal } = useGlobalContext();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -175,7 +177,7 @@ const SideNavbar = () => {
               href="rated"
             />
           </Tabs>
-       
+
           {signedUp ? (
             <Button
               sx={{
@@ -198,7 +200,10 @@ const SideNavbar = () => {
                 />
                 <Box>
                   <Typography variant="h6">Chan Geme</Typography>
-                  <Typography variant="body2" color={theme.palette.text.primary}>
+                  <Typography
+                    variant="body2"
+                    color={theme.palette.text.primary}
+                  >
                     @changeme
                   </Typography>
                 </Box>
@@ -217,8 +222,11 @@ const SideNavbar = () => {
                 marginTop: "auto", // Push the box to the bottom
                 marginBottom: "2rem",
               }}
+              onClick={() => {
+                setActiveModal("login");
+              }}
             >
-              Sign Up
+              LOGIN
             </Button>
           )}
         </Box>
