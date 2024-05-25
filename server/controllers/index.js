@@ -56,7 +56,7 @@ export const loginController = async (req, res) => {
     if (!user) {
       res
         .status(401)
-        .json({ message: "Login not succesful", error: "User not found" });
+        .json({ message: "User not found", });
     } else {
       bcrypt.compare(password, user.password).then((result) => {
         if (result) {

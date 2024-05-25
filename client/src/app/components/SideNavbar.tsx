@@ -83,7 +83,7 @@ const SideNavbar = () => {
               width: "100%",
               height: "100vh",
             },
-
+            minHeight: "100vh",
             background: "#080808",
             paddingX: "4rem",
             paddingY: "2rem",

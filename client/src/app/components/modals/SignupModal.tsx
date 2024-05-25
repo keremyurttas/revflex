@@ -12,22 +12,105 @@ import Link from "@mui/material/Link";
 import Fade from "@mui/material/Fade";
 import { ChangeEvent, FC, useState } from "react";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
+// import InputLabel from "@mui/material/InputLabel
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import { useGlobalContext } from "@/app/Context/store";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import InputLabel from "@mui/material/InputLabel";
+import { ErrorTypo } from "./ErrorTypo";
 
 interface SignupModalProps {
   open: boolean;
   onClose: () => void;
 }
+
 const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
-  const { setActiveModal } = useGlobalContext();
+  const { setActiveModal, fetchUserDetails } = useGlobalContext();
   const [stepIndex, setStepIndex] = useState(0);
   const [favGenres, setFavGenres] = useState<string[]>([]);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [prefferedName, setPrefferedName] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    password: "",
+    avatar: "",
+    prefferedName: "",
+    genres: "",
+    register: "",
+  });
+
+  const firstValidate = () => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    let valid = true;
+
+    if (username.length < 6) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        username: "Username less than 6 characters",
+      }));
+      valid = false;
+    } else {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        username: "",
+      }));
+    }
+
+    if (!passwordRegex.test(password)) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        password:
+          "Must contain 6+ characters, including at least 1 letter and 1 number.",
+      }));
+      valid = false;
+    } else {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        password: "",
+      }));
+    }
+
+    return valid;
+  };
+  const secondValidate = () => {
+    let valid = true;
+
+    if (!prefferedName) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        prefferedName: "Write your preffered name",
+      }));
+      valid = false;
+    } else {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        prefferedName: "",
+      }));
+    }
+
+    if (favGenres.length < 1) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        genres: "Select at least 1 genre",
+      }));
+
+      valid = false;
+    } else {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        genres: "",
+      }));
+    }
+
+    return valid;
+  };
+
   const genres = ["action", "horror", "sci-fi"];
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -39,10 +122,47 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
       },
     },
   };
-  const validation = () => true;
-  const handleButton = () => {
-    validation() ? setStepIndex(stepIndex + 1) : null;
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (secondValidate() && firstValidate()) {
+      const response = await fetch("http://localhost:8000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          prefferedName,
+          avatar,
+          genres,
+        }),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setActiveModal(null);
+        fetchUserDetails();
+      } else {
+        const errorMessage = await response.json(); // Get error message from the response
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          register: `Register failed: ${errorMessage.message}`,
+        }));
+      }
+    }
   };
+
+  const handleButton = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (firstValidate()) {
+      setStepIndex(stepIndex + 1);
+    }
+  };
+
   const handleFavGenresChange = (
     event: SelectChangeEvent<typeof favGenres>
   ) => {
@@ -56,11 +176,9 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
   };
 
   const ImageInput = () => {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
     const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files[0]) {
-        setSelectedImage(URL.createObjectURL(event.target.files[0]));
+        setAvatar(URL.createObjectURL(event.target.files[0]));
       }
     };
     const defaultAvatar =
@@ -72,7 +190,7 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
       >
         <Box
           component="img"
-          src={selectedImage || defaultAvatar}
+          src={avatar || defaultAvatar}
           alt="Selected"
           sx={{
             width: 100,
@@ -90,90 +208,276 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
             type="file"
             onChange={handleImageChange}
           />
-          <Button variant="contained" component="span" sx={{}}>
+          <Button variant="contained" component="span">
             Upload Your Avatar
           </Button>
         </label>
         <Typography variant="body2" color="textSecondary">
-          {selectedImage ? "Change Image" : "Select an image to upload"}
+          {avatar ? "Change Image" : "Select an image to upload"}
         </Typography>
       </Box>
     );
   };
+
   const FirstStepTemplate = () => {
     return (
-      <Box
-        sx={{
-          display: "grid",
-          rowGap: "2rem",
-        }}
-      >
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              border: ".2px solid",
-              borderRadius: "10px",
-              paddingX: "1rem",
-              gap: "1rem",
-              marginBottom: "2rem",
-              paddingY: "1rem",
-              transition: "border-radius 0.3s ease",
-              "&:focus-within": {
-                borderRadius: "20px",
-              },
-            }}
-          >
-            <PersonIcon color="primary" />
+      <form onSubmit={handleButton}>
+        <Box
+          sx={{
+            display: "grid",
+            rowGap: "2rem",
+          }}
+        >
+          <Box>
+            <Box sx={{ marginBottom: "2rem" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  border: ".2px solid",
+                  borderRadius: "10px",
+                  paddingX: "1rem",
+                  gap: "1rem",
+                  marginBottom: ".5rem",
+                  paddingY: "1rem",
+                  transition: "border-radius 0.3s ease",
+                  "&:focus-within": {
+                    borderRadius: "20px",
+                  },
+                }}
+              >
+                <PersonIcon color="primary" />
+                <InputBase
+                  placeholder="Username"
+                  sx={{ color: "white" }}
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                ></InputBase>
+              </Box>
+              <ErrorTypo message={formErrors.username} />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                border: ".2px solid",
+                borderRadius: "10px",
+                paddingX: "1rem",
+                gap: "1rem",
+                paddingY: "1rem",
+                transition: "border-radius 0.3s ease",
+                "&:focus-within": {
+                  borderRadius: "20px",
+                },
+                marginBottom: ".5rem",
+              }}
+            >
+              <LockIcon color="primary" />
+              <InputBase
+                type="password"
+                placeholder="Password"
+                sx={{ color: "white" }}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              ></InputBase>
+            </Box>
 
-            <InputBase
-              placeholder="Username"
-              sx={{ color: "white" }}
-            ></InputBase>
+            <Typography
+              variant="body2"
+              fontSize={".8rem"}
+              color={formErrors.password ? "error" : "primary"}
+              sx={{
+                wordBreak: "break-word", // Ensures words break to fit the container
+                whiteSpace: "normal", // Allows normal wrapping behavior
+                width: "fit-content", // Ensures the text container takes full width
+              }}
+            >
+              Must contain 8+ characters, including at least 1 letter and 1
+              number.
+            </Typography>
           </Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              border: ".2px solid",
-              borderRadius: "10px",
-              paddingX: "1rem",
-              gap: "1rem",
-              paddingY: "1rem",
-              transition: "border-radius 0.3s ease",
-              "&:focus-within": {
-                borderRadius: "20px",
-              },
 
-              marginBottom: ".5rem",
-            }}
-          >
-            <LockIcon color="primary" />
-
-            <InputBase
-              type="password"
-              placeholder="Password"
-              sx={{ color: "white" }}
-            ></InputBase>
+          <Box sx={{ display: "grid", rowGap: "1rem" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                color: theme.palette.secondary.main,
+                borderRadius: "10px",
+                paddingY: "1rem",
+                transition: "border-radius 0.3s ease",
+                "&:hover": {
+                  borderRadius: "15px",
+                },
+                [theme.breakpoints.down("lg")]: {
+                  paddingY: "1rem",
+                },
+              }}
+              fullWidth
+              type="submit"
+            >
+              Sign up
+            </Button>
+            <Typography
+              color={theme.palette.primary.main}
+              sx={{ marginX: "auto" }}
+            >
+              Already have an account?
+              <Link
+                sx={{ cursor: "pointer" }}
+                color={theme.palette.secondary.main}
+                onClick={() => {
+                  setActiveModal("login");
+                }}
+              >
+                {" "}
+                Log in
+              </Link>
+            </Typography>
           </Box>
-          <Typography
-            variant="body2"
-            fontSize={".8rem"}
-            color="primary"
-            sx={{
-              wordBreak: "break-word", // Ensures words break to fit the container
-              whiteSpace: "normal", // Allows normal wrapping behavior
-              width: "fit-content", // Ensures the text container takes full width
-            }}
-          >
-            Must contain 8+ characters, including at least 1 letter and 1
-            number.
-          </Typography>
         </Box>
+      </form>
+    );
+  };
 
-        <Box sx={{ display: "grid", rowGap: "1rem" }}>
+  const SecondStepTemplate = () => {
+    return (
+      <Box>
+        <form onSubmit={handleRegister}>
           <Button
+            onClick={() => {
+              setStepIndex(stepIndex - 1);
+            }}
+            sx={{ position: "absolute", top: "2rem", left: "2rem" }}
+          >
+            <ArrowBackIcon fontSize="large" />
+          </Button>
+          <ImageInput />
+          <Box sx={{ marginBottom: "2rem" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                border: ".2px solid",
+                borderRadius: "10px",
+                paddingX: ".8rem",
+                gap: "1rem",
+                marginBottom: ".5rem",
+                paddingY: ".8rem",
+                transition: "border-radius 0.3s ease",
+                "&:focus-within": {
+                  borderRadius: "20px",
+                },
+              }}
+            >
+              <DriveFileRenameOutlineIcon color="primary" />
+              <InputBase
+                placeholder="How should we call you?"
+                sx={{ color: "white" }}
+                value={prefferedName} // Set value to maintain state
+                onChange={(e) => {
+                  setPrefferedName(e.target.value);
+                }}
+              ></InputBase>
+            </Box>
+            <ErrorTypo message={formErrors.prefferedName} />
+          </Box>
+          <Box sx={{ marginBottom: "2rem" }}>
+            <FormControl
+              sx={{ width: "100%", marginBottom: ".5rem" }}
+              variant="outlined"
+            >
+              <InputLabel
+                sx={{ color: theme.palette.text.primary }}
+                id="demo-multiple-chip-label"
+              >
+                Select favorite genres
+              </InputLabel>
+              <Select
+                sx={{
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: theme.palette.secondary.main,
+                    borderWidth: ".5px",
+                    borderRadius: "10px",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: theme.palette.secondary.main,
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: theme.palette.secondary.main,
+                  },
+                }}
+                labelId="demo-multiple-chip-label"
+                id="demo-multiple-chip"
+                multiple
+                value={favGenres}
+                onChange={handleFavGenresChange}
+                input={
+                  <OutlinedInput
+                    id="select-multiple-chip"
+                    label="Favorite genres"
+                  />
+                }
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {genres.map((genre) => (
+                  <MenuItem
+                    sx={{
+                      backgroundColor: favGenres.includes(genre)
+                        ? theme.palette.action.selected
+                        : "inherit",
+                      "&.Mui-selected": {
+                        backgroundColor: theme.palette.action.selected,
+                        color: theme.palette.secondary.main,
+                        "&:hover": {
+                          backgroundColor: theme.palette.action.selected,
+                        },
+                      },
+                    }}
+                    key={genre}
+                    value={genre}
+                  >
+                    {genre}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <ErrorTypo message={formErrors.genres} />
+            {formErrors.register && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <ErrorTypo message={formErrors.register} />
+                <Link
+                  sx={{ cursor: "pointer" }}
+                  fontSize={"small"}
+                  onClick={() => {
+                    setStepIndex(stepIndex - 1);
+                  }}
+                >
+                  Go to previous step
+                </Link>
+              </Box>
+            )}
+          </Box>
+
+          <Button
+            type="submit"
             variant="contained"
             color="primary"
             sx={{
@@ -189,142 +493,10 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
               },
             }}
             fullWidth
-            onClick={handleButton}
           >
-            Sign up
+            Next
           </Button>
-          <Typography
-            color={theme.palette.primary.main}
-            sx={{ marginX: "auto" }}
-          >
-            Already have an account?
-            <Link
-              sx={{ cursor: "pointer" }}
-              color={theme.palette.secondary.main}
-              onClick={() => {
-                setActiveModal("login");
-              }}
-            >
-              {" "}
-              Log in
-            </Link>
-          </Typography>
-        </Box>
-      </Box>
-    );
-  };
-  const SecondStepTemplate = () => {
-    return (
-      <Box>
-        <ImageInput></ImageInput>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            border: ".2px solid",
-            borderRadius: "10px",
-            paddingX: ".8rem",
-            gap: "1rem",
-            marginBottom: "2rem",
-            paddingY: ".8rem",
-            transition: "border-radius 0.3s ease",
-            "&:focus-within": {
-              borderRadius: "20px",
-            },
-          }}
-        >
-          <DriveFileRenameOutlineIcon color="primary" />
-
-          <InputBase
-            placeholder="How should we call you?"
-            sx={{ color: "white" }}
-          ></InputBase>
-        </Box>
-        <FormControl
-          sx={{ width: "100%", marginBottom: "2rem" }}
-          variant="outlined"
-        >
-          <InputLabel
-            sx={{ color: theme.palette.text.primary }}
-            id="demo-multiple-chip-label"
-          >
-            Select favorite genres
-          </InputLabel>
-          <Select
-            sx={{
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.secondary.main,
-                borderWidth: ".5px",
-                borderRadius: "10px",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.secondary.main,
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.secondary.main,
-              },
-            }}
-            labelId="demo-multiple-chip-label"
-            id="demo-multiple-chip"
-            multiple
-            value={favGenres}
-            onChange={handleFavGenresChange}
-            input={
-              <OutlinedInput
-                id="select-multiple-chip"
-                label="Favorite genres"
-              />
-            }
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} />
-                ))}
-              </Box>
-            )}
-            MenuProps={MenuProps}
-          >
-            {genres.map((genre) => (
-              <MenuItem
-                sx={{
-                  backgroundColor: favGenres.includes(genre)
-                    ? theme.palette.action.selected
-                    : "inherit",
-                  "&.Mui-selected": {
-                    backgroundColor: theme.palette.action.selected,
-                    color: theme.palette.secondary.main,
-                    "&:hover": {
-                      backgroundColor: theme.palette.action.selected,
-                    },
-                  },
-                }}
-                key={genre}
-                value={genre}
-              >
-                {genre}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            color: theme.palette.secondary.main,
-            borderRadius: "10px",
-            paddingY: "1rem",
-            transition: "border-radius 0.3s ease",
-            "&:hover": {
-              borderRadius: "15px",
-            },
-            [theme.breakpoints.down("lg")]: {
-              paddingY: "1rem",
-            },
-          }}
-          fullWidth
-        >
-          Next
-        </Button>
+        </form>
       </Box>
     );
   };
@@ -335,8 +507,8 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
         sx={{ color: theme.palette.secondary.main }}
         open={open}
         onClose={onClose}
-        aria-labelledby="Login modal"
-        aria-describedby="Login modal description"
+        aria-labelledby="Signup modal"
+        aria-describedby="Signup modal description"
       >
         <Fade timeout={1000} in={open}>
           <Box
@@ -347,16 +519,18 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
               transform: "translate(-50%, -50%)",
               bgcolor: "#080808",
               boxShadow: 24,
-              maxWidth: "600px",
               paddingX: "7rem",
               paddingY: "5rem",
               display: "grid",
               rowGap: "3rem",
+              height: "70vh",
+              width: "35vw",
               [theme.breakpoints.down("lg")]: {
                 paddingX: "2rem",
                 paddingY: "1.5rem",
                 width: "80%",
                 rowGap: "2rem",
+                height: "min-content",
               },
             }}
           >

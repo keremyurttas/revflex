@@ -10,8 +10,8 @@ import {
 } from "react";
 
 interface ContextProps {
-  activeModal: string;
-  setActiveModal: Dispatch<SetStateAction<string>>;
+  activeModal: string|null;
+  setActiveModal: Dispatch<SetStateAction<string | null>>;
   setUser: Dispatch<
     SetStateAction<{
       userName: string;
@@ -35,7 +35,7 @@ type RootContentProps = {
 };
 
 const GlobalContext = createContext<ContextProps>({
-  activeModal: "",
+  activeModal: null,
   user: {
     userName: "",
     prefferedName: "",
