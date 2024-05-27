@@ -8,6 +8,7 @@ import {
   useState,
   ReactNode,
   useCallback,
+  useEffect,
 } from "react";
 
 interface Movie {
@@ -17,26 +18,25 @@ interface Movie {
   genres: string[];
 }
 
+interface User {
+  username: string;
+  prefferedName: string;
+  genres: string[];
+  likes: string[];
+  avatar: string;
+}
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
 interface ContextProps {
   activeModal: string | null;
   popularMovies: Movie[];
   setActiveModal: Dispatch<SetStateAction<string | null>>;
-  setUser: Dispatch<
-    SetStateAction<{
-      username: string;
-      prefferedName: string;
-      genres: string[];
-      likes: string[];
-      avatar: string;
-    }>
-  >;
-  user: {
-    username: string;
-    prefferedName: string;
-    genres: string[];
-    likes: string[];
-    avatar: string;
-  };
+  setUser: Dispatch<SetStateAction<User>>;
+  user: User;
   fetchUserDetails: () => void;
   fetchPopularMovies: () => void;
 }
@@ -50,13 +50,30 @@ const GlobalContext = createContext<ContextProps | undefined>(undefined);
 export const GlobalContextProvider = ({ children }: RootContentProps) => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
-  const [user, setUser] = useState<ContextProps["user"]>({
+  const [user, setUser] = useState<User>({
     username: "",
     prefferedName: "",
     genres: [],
     likes: [],
     avatar: "",
   });
+  const [genres, setGenres] = useState<Genre[]>([]);
+
+  const fetchGenres = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/genre/movie/list?api_key=0c1c779b65d0bbadb26f4d37ed5eda05&language=en-US`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setGenres(data.genres);
+      } else {
+        console.error("Failed to fetch genres:", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching genres:", error);
+    }
+  }, []);
 
   const fetchPopularMovies = useCallback(async () => {
     try {
@@ -76,17 +93,20 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
           id: movie.id,
           backdrop_path: movie.backdrop_path,
           title: movie.title,
-          genres: movie.genre_ids.map((id: number) => id.toString()), // assuming genre_ids is an array of genre ids
+          genres: movie.genre_ids.map((id: number) => {
+            const genre = genres.find((g) => g.id === id);
+            return genre ? genre.name : "";
+          }),
         }));
-        console.log(movies);
         setPopularMovies(movies);
+        console.log(movies)
       } else {
         console.error("Failed to fetch popular movies:", response.statusText);
       }
     } catch (error) {
       console.error("An error occurred while fetching popular movies:", error);
     }
-  }, []);
+  }, [genres]);
 
   const fetchUserDetails = useCallback(async () => {
     try {
@@ -100,7 +120,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
-        setUser(data); // Update the user state
+        setUser(data);
       } else {
         console.error("Failed to fetch user details:", response.statusText);
       }
@@ -108,6 +128,16 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       console.error("An error occurred while fetching user details:", error);
     }
   }, []);
+
+  useEffect(() => {
+    fetchGenres();
+  }, [fetchGenres]);
+
+  useEffect(() => {
+    if (genres.length > 0) {
+      fetchPopularMovies();
+    }
+  }, [genres, fetchPopularMovies]);
 
   return (
     <GlobalContext.Provider

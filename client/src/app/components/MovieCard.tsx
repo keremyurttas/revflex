@@ -8,10 +8,19 @@ import MovieIcon from "@mui/icons-material/Movie";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 interface MovieCardProps {
-  className?: string; // Optional className prop
-  // Add other props as needed
+  className?: string;
+  id: number;
+  backdrop_path: string;
+  title: string;
+  genres: string[];
 }
-const MovieCard: React.FC<MovieCardProps> = ({ className }) => {
+const MovieCard: React.FC<MovieCardProps> = ({
+  className,
+  id,
+  backdrop_path,
+  title,
+  genres,
+}) => {
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -45,11 +54,11 @@ const MovieCard: React.FC<MovieCardProps> = ({ className }) => {
               height: 200,
             },
           }}
-          image="https://play-lh.googleusercontent.com/sdg5tqwb-V7YZD9lG1zKbxvmpcVMxY6IHl1rWQLUYHVMvvlfV5yUQQ8RAtnwxA5wc9vIWm6nDCKeWVdv0fU"
+          image={`https://image.tmdb.org/t/p/w500/${backdrop_path}`}
         />
         <CardContent sx={{ paddingX: 0 }}>
           <Typography fontSize={".9rem"} fontWeight={600} variant="h5">
-            The Green Knight (2021)
+            {title}
           </Typography>
           <Box
             sx={{
@@ -67,7 +76,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ className }) => {
               }}
             >
               <MovieIcon sx={{ width: 16, height: 16 }} />
-              <Typography variant="body1">Fantasy</Typography>
+              <Typography variant="body1">{genres[0]}</Typography>
             </Box>
             <Button
               sx={{

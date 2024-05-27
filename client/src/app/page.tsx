@@ -9,28 +9,12 @@ import { useKeenSlider } from "keen-slider/react";
 import CommentedCard from "./components/CommentedCard";
 import "keen-slider/keen-slider.min.css";
 import { useGlobalContext } from "./Context/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-// const options = {
-//   method: "GET",
-//   headers: {
-//     accept: "application/json",
-//     Authorization:
-//       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYzFjNzc5YjY1ZDBiYmFkYjI2ZjRkMzdlZDVlZGEwNSIsInN1YiI6IjY2NTQ1NjQ2ZmYwZjQxMTlhOGI0YzM3YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dH-NojQvNI08SnQawWV3HgIwyN8c81T1XHEekhseoJw",
-//   },
-// };
-
-// fetch(
-//   "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc",
-//   options
-// )
-//   .then((response) => response.json())
-//   .then((response) => setPopularMovies([...response.genres, ]))
-//   .catch((err) => console.error(err));
-// fetchPopularMovies();
 const Page = () => {
   const { fetchPopularMovies, popularMovies } = useGlobalContext();
-  const [moviesSlider] = useKeenSlider({
+  const [moviesLoaded, setMoviesLoaded] = useState(false);
+  const [moviesSlider, instanceRef] = useKeenSlider({
     loop: true,
     slides: {
       perView: 2.1,
@@ -58,8 +42,19 @@ const Page = () => {
   });
 
   useEffect(() => {
-    fetchPopularMovies();
-  }, []);
+    const fetchMovies = async () => {
+      await fetchPopularMovies();
+      setMoviesLoaded(true);
+    };
+    fetchMovies();
+  }, [fetchPopularMovies]);
+
+  useEffect(() => {
+    if (moviesLoaded && instanceRef.current) {
+      instanceRef.current.update();
+    }
+  }, [moviesLoaded, popularMovies, instanceRef]);
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -90,25 +85,9 @@ const Page = () => {
               {popularMovies &&
                 popularMovies.map((movie) => (
                   <div key={movie.id} className="keen-slider__slide  ">
-                    <MovieCard />
+                    <MovieCard {...movie} />
                   </div>
                 ))}
-
-              <div className="keen-slider__slide ">
-                <MovieCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <MovieCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <MovieCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <MovieCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <MovieCard />
-              </div>
             </Grid>
           </Box>
           <Box>
