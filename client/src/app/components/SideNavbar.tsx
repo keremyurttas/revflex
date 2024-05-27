@@ -21,17 +21,19 @@ import { useGlobalContext } from "../Context/store";
 
 const SideNavbar = () => {
   const path = usePathname()?.slice(1); // remove the '/'
-  const [value, setValue] = useState(path || "home"); // Use the path or default to "home"
+  // const validatedPath =path ? allowedPaths.includes(path) : path : null;
+  const [currentTab, setCurrentTab] = useState(path || "home");
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [showNavbar, setShowNavbar] = useState(false);
   const [isSlideExitCompleted, setIsSlideExitCompleted] = useState(true);
-  const signedUp = false;
-  const { setActiveModal } = useGlobalContext();
+  const { setActiveModal, user, fetchUserDetails } = useGlobalContext();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+    setCurrentTab(newValue);
   };
-
+  useEffect(() => {
+    fetchUserDetails(); // Fetch user details when component mounts
+  }, [fetchUserDetails]);
   useEffect(() => {
     if (isLargeScreen) {
       setShowNavbar(true); // Show navbar on large screens
@@ -112,6 +114,7 @@ const SideNavbar = () => {
               </Button>
             )}
           </Box>
+
           <Box
             sx={{
               display: "flex",
@@ -137,7 +140,7 @@ const SideNavbar = () => {
           <Tabs
             orientation="vertical"
             variant="fullWidth"
-            value={value}
+            value={currentTab}
             onChange={handleChange}
             TabIndicatorProps={{
               sx: {
@@ -190,7 +193,7 @@ const SideNavbar = () => {
             />
           </Tabs>
 
-          {signedUp ? (
+          {user.username ? (
             <Button
               sx={{
                 position: "relative",
@@ -206,17 +209,14 @@ const SideNavbar = () => {
               href="/user"
             >
               <Box sx={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-                <Avatar
-                  alt="Username"
-                  src="https://mui.com/static/images/avatar/1.jpg"
-                />
+                <Avatar alt="Username" src={user.avatar} />
                 <Box>
-                  <Typography variant="h6">Chan Geme</Typography>
+                  <Typography variant="h6">{user.prefferedName}</Typography>
                   <Typography
                     variant="body2"
                     color={theme.palette.text.primary}
                   >
-                    @changeme
+                    @{user.username}
                   </Typography>
                 </Box>
               </Box>

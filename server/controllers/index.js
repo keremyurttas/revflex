@@ -54,9 +54,7 @@ export const loginController = async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
-      res
-        .status(401)
-        .json({ message: "User not found", });
+      res.status(401).json({ message: "User not found" });
     } else {
       bcrypt.compare(password, user.password).then((result) => {
         if (result) {
@@ -124,6 +122,14 @@ export const getUserInformationsByToken = (req, res) => {
     });
 };
 export const logoutController = (req, res) => {
-  res.cookie("jwt", "", { maxAge: "1" });
-  res.redirect("/");
+  // Clear the JWT cookie
+  res.cookie("jwt", "", {
+    maxAge: 1,
+    httpOnly: true, // Helps prevent cross-site scripting (XSS) attacks
+    secure: process.env.NODE_ENV === "production", // Ensures cookie is sent only over HTTPS in production
+    sameSite: "strict", // Helps prevent cross-site request forgery (CSRF) attacks
+  });
+
+  // Send a JSON response
+  res.status(200).json({ message: "Logout successful" });
 };

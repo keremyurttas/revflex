@@ -7,14 +7,15 @@ import {
   SetStateAction,
   useState,
   ReactNode,
+  useCallback,
 } from "react";
 
 interface ContextProps {
-  activeModal: string|null;
+  activeModal: string | null;
   setActiveModal: Dispatch<SetStateAction<string | null>>;
   setUser: Dispatch<
     SetStateAction<{
-      userName: string;
+      username: string;
       prefferedName: string;
       genres: string[];
       likes: string[];
@@ -22,7 +23,7 @@ interface ContextProps {
     }>
   >;
   user: {
-    userName: string;
+    username: string;
     prefferedName: string;
     genres: string[];
     likes: string[];
@@ -37,7 +38,7 @@ type RootContentProps = {
 const GlobalContext = createContext<ContextProps>({
   activeModal: null,
   user: {
-    userName: "",
+    username: "",
     prefferedName: "",
     genres: [],
     likes: [],
@@ -50,29 +51,33 @@ const GlobalContext = createContext<ContextProps>({
 export const GlobalContextProvider = ({ children }: RootContentProps) => {
   const [activeModal, setActiveModal] = useState("");
   const [user, setUser] = useState<ContextProps["user"]>({
-    userName: "",
+    username: "",
     prefferedName: "",
     genres: [],
     likes: [],
     avatar: "",
   });
 
-  const fetchUserDetails = async () => {
-    const response = await fetch("http://localhost:8000/api/auth/user/info", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-    } else {
-      console.error("Login failed:", response.statusText);
-      // Handle failed login
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/user/info", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data); // Update the user state
+      } else {
+        console.error("Failed to fetch user details:", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching user details:", error);
     }
-  };
+  }, [setUser]);
   return (
     <GlobalContext.Provider
       value={{ activeModal, setActiveModal, user, setUser, fetchUserDetails }}
