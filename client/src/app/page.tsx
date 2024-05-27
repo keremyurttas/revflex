@@ -8,8 +8,28 @@ import MovieCard from "./components/MovieCard";
 import { useKeenSlider } from "keen-slider/react";
 import CommentedCard from "./components/CommentedCard";
 import "keen-slider/keen-slider.min.css";
+import { useGlobalContext } from "./Context/store";
+import { useEffect } from "react";
 
+// const options = {
+//   method: "GET",
+//   headers: {
+//     accept: "application/json",
+//     Authorization:
+//       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYzFjNzc5YjY1ZDBiYmFkYjI2ZjRkMzdlZDVlZGEwNSIsInN1YiI6IjY2NTQ1NjQ2ZmYwZjQxMTlhOGI0YzM3YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dH-NojQvNI08SnQawWV3HgIwyN8c81T1XHEekhseoJw",
+//   },
+// };
+
+// fetch(
+//   "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc",
+//   options
+// )
+//   .then((response) => response.json())
+//   .then((response) => setPopularMovies([...response.genres, ]))
+//   .catch((err) => console.error(err));
+// fetchPopularMovies();
 const Page = () => {
+  const { fetchPopularMovies, popularMovies } = useGlobalContext();
   const [moviesSlider] = useKeenSlider({
     loop: true,
     slides: {
@@ -37,6 +57,9 @@ const Page = () => {
     },
   });
 
+  useEffect(() => {
+    fetchPopularMovies();
+  }, []);
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -64,9 +87,13 @@ const Page = () => {
               Popular Movies
             </Typography>
             <Grid ref={moviesSlider} className="keen-slider">
-              <div className="keen-slider__slide  ">
-                <MovieCard />
-              </div>
+              {popularMovies &&
+                popularMovies.map((movie) => (
+                  <div key={movie.id} className="keen-slider__slide  ">
+                    <MovieCard />
+                  </div>
+                ))}
+
               <div className="keen-slider__slide ">
                 <MovieCard />
               </div>
