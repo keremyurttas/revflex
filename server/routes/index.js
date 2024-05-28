@@ -4,13 +4,15 @@ import {
   loginController,
   getUserInformationsByToken,
   logoutController,
-} from "../controllers/index.js";
+} from "../controllers/auths.js";
+import { createComment } from "../controllers/comments.js";
 import { registerMiddleware } from "../middleware/register.js";
 const router = express.Router();
 
-router.post("/register", registerMiddleware, registerController);
-router.post("/login", loginController);
-router.get("/user/info", getUserInformationsByToken);
-router.get("/logout", logoutController);
+router.post("/auth/register", registerMiddleware, registerController);
+router.post("/auth/login", loginController);
+router.get("/auth/user/info", getUserInformationsByToken);
+router.get("/auth/logout", logoutController);
+router.post("/movies/:movieId/comments", createComment);
 
 export default router;
