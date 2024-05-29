@@ -1,5 +1,6 @@
 "use client";
 
+import { ContextProps, Genre, CommentDetails, Movie, User } from "@/interfaces";
 import {
   createContext,
   useContext,
@@ -10,36 +11,6 @@ import {
   useCallback,
   useEffect,
 } from "react";
-
-interface Movie {
-  id: number;
-  backdrop_path: string;
-  title: string;
-  genres: string[];
-}
-
-interface User {
-  username: string;
-  prefferedName: string;
-  genres: string[];
-  likes: string[];
-  avatar: string;
-}
-
-interface Genre {
-  id: number;
-  name: string;
-}
-
-interface ContextProps {
-  activeModal: string | null;
-  popularMovies: Movie[];
-  setActiveModal: Dispatch<SetStateAction<string | null>>;
-  setUser: Dispatch<SetStateAction<User>>;
-  user: User;
-  fetchUserDetails: () => void;
-  fetchPopularMovies: () => void;
-}
 
 type RootContentProps = {
   children: ReactNode;
@@ -56,6 +27,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     genres: [],
     likes: [],
     avatar: "",
+    id: "",
   });
   const [genres, setGenres] = useState<Genre[]>([]);
 
@@ -89,6 +61,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         const movies = data.results.map((movie: any) => ({
           id: movie.id,
           backdrop_path: movie.backdrop_path,
@@ -99,7 +72,6 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
           }),
         }));
         setPopularMovies(movies);
-        console.log(movies)
       } else {
         console.error("Failed to fetch popular movies:", response.statusText);
       }
@@ -129,6 +101,35 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     }
   }, []);
 
+  const createComment = async (comment: CommentDetails) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/movies/${comment.movie_id}/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...comment,
+            owner_id: user.id,
+            owner_user: user.username,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Comment submitted successfully:", data);
+        return data; // Optionally return data for further use
+      } else {
+        console.error("Failed to post a new comment:", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occurred while posting a new comment:", error);
+    }
+  };
+
   useEffect(() => {
     fetchGenres();
   }, [fetchGenres]);
@@ -149,6 +150,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         fetchUserDetails,
         fetchPopularMovies,
         popularMovies,
+        createComment,
       }}
     >
       {children}

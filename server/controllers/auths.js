@@ -98,7 +98,6 @@ export const getUserInformationsByToken = (req, res) => {
       reject("Token not provided");
     } else {
       jwt.verify(token, jwtSecret, (err, decodedToken) => {
-        console.log(decodedToken);
         if (err) {
           reject("Invalid token");
         } else {
@@ -107,6 +106,7 @@ export const getUserInformationsByToken = (req, res) => {
             username: decodedToken.username,
             genres: decodedToken.genres,
             prefferedName: decodedToken.prefferedName,
+            id: decodedToken.id,
           });
         }
       });

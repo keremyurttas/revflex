@@ -18,11 +18,13 @@ const Page = () => {
     loop: true,
     slides: {
       perView: 2.1,
+      spacing:10
     },
     breakpoints: {
       "(min-width: 1280px)": {
         slides: {
           perView: 5.2,
+          spacing:15
         },
       },
     },

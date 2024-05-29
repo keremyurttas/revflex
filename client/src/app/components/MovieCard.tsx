@@ -24,13 +24,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
   return (
     <ThemeProvider theme={theme}>
       <Box
+        component={"a"}
+        href={`/movie/${id}`}
         className={className}
         sx={{
           cursor: "pointer",
           width: 200,
           position: "relative",
           height: 400,
-
           bgcolor: "transparent",
           color: theme.palette.primary.main,
           [theme.breakpoints.down("lg")]: {

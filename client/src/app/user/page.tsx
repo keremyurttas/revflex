@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const User = () => {
   const { setUser } = useGlobalContext();
-  const router = useRouter()
+  const router = useRouter();
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/auth/logout", {
@@ -24,9 +24,10 @@ const User = () => {
           genres: [],
           likes: [],
           avatar: "",
+          id: "",
         });
         console.log("Logged out successfully");
-        router.push('/')
+        router.push("/");
       } else {
         console.error("Failed to log out:", response.statusText);
       }
