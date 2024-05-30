@@ -8,7 +8,7 @@ import Rating from "@mui/material/Rating";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import theme from "@/theme/theme";
-import { AddCommentProps, Comment } from "@/interfaces";
+import { AddCommentProps } from "@/interfaces";
 
 export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
   const { movieId } = useParams<{ movieId: string }>();
@@ -29,21 +29,19 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
     setRating(newRating);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newComment = {
       movie_id: movieId,
       text: comment,
       rate: rating,
     };
 
-    createComment(newComment);
-    const newCommentWDetails: Comment = {
-        ...newComment,
-        date: Date.now(),
-        owner_user: user.username,
-        owner_id: user.id,
-      };
-    onNewComment(newCommentWDetails);
+    const createdComment = await createComment(newComment);
+
+    onNewComment(createdComment);
+
+    // Pass the created comment to the parent component
+
     setComment("");
     setRating(0);
   };

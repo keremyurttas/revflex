@@ -122,6 +122,9 @@ const Movie = () => {
   const handleNewComment = (newComment: Comment) => {
     setComments([newComment, ...comments]);
   };
+  const handleDeleteCommentLocal = (id: string) => {
+    setComments(comments.filter((comment) => comment._id !== id));
+  };
 
   if (!movieData || !comments) {
     return <div>Loading...</div>;
@@ -293,11 +296,19 @@ const Movie = () => {
             marginY: "2rem",
           }}
         >
-          {user.id && <AddComment onNewComment={handleNewComment} />}
+          {user.id ? (
+            <AddComment onNewComment={handleNewComment} />
+          ) : (
+            <Typography>You must login to add a comment</Typography>
+          )}
 
           {comments.length > 0 ? (
             comments.map((comment: Comment, index) => (
-              <MovieComment key={index} {...comment} />
+              <MovieComment
+                key={index}
+                comment={comment}
+                deleteCommentLocal={handleDeleteCommentLocal}
+              />
             ))
           ) : (
             <Typography>No comments available.</Typography>

@@ -101,7 +101,9 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     }
   }, []);
 
-  const createComment = async (comment: CommentDetails) => {
+  const createComment = async (
+    comment: CommentDetails
+  ): Promise<Comment | null> => {
     try {
       const response = await fetch(
         `http://localhost:8000/api/movies/${comment.movie_id}/comments`,
@@ -121,12 +123,14 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Comment submitted successfully:", data);
-        return data; // Optionally return data for further use
+        return data; // Return the created comment
       } else {
         console.error("Failed to post a new comment:", response.statusText);
+        return null;
       }
     } catch (error) {
       console.error("An error occurred while posting a new comment:", error);
+      return null;
     }
   };
 

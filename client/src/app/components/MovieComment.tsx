@@ -1,9 +1,12 @@
 import theme from "@/theme/theme";
 import { Box, Avatar, Typography, Rating, Button } from "@mui/material";
-import { Comment } from "@/interfaces";
+import { Comment, MovieCommentProps } from "@/interfaces";
 import { useGlobalContext } from "../Context/store";
 
-export const MovieComment = (comment: Comment) => {
+export const MovieComment: React.FC<MovieCommentProps> = ({
+  comment,
+  deleteCommentLocal,
+}) => {
   const { user } = useGlobalContext();
   const formattedDate = (date: number) => {
     return new Date(date)
@@ -14,9 +17,20 @@ export const MovieComment = (comment: Comment) => {
       })
       .toUpperCase();
   };
-  const handleDelete = () => {};
-  console.log(comment.owner_id);
-  console.log(user.id);
+  const handleDelete = async () => {
+    const response = await fetch(
+      `http://localhost:8000/api/movies/${comment.movie_id}/comments/${comment._id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (response.ok) {
+      deleteCommentLocal(comment._id);
+    } else {
+      console.error("Failed to delete comment:", response.statusText);
+    }
+  };
+
   return (
     <Box marginBottom={2}>
       <Box
