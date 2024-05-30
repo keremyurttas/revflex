@@ -41,3 +41,15 @@ export const deleteComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getRecentComments = async (req, res) => {
+  try {
+    const recentComments = await Comment.find()
+      .sort({ date: -1 })
+      .limit(10)
+      .exec();
+    res.status(200).json(recentComments);
+  } catch (error) {
+    res.status(500).json({ message: "An error occured", error });
+  }
+};

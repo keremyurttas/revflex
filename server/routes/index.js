@@ -9,6 +9,7 @@ import {
   createComment,
   deleteComment,
   getCommentsByMovieId,
+  getRecentComments,
 } from "../controllers/comments.js";
 import { registerMiddleware } from "../middleware/register.js";
 const router = express.Router();
@@ -19,6 +20,7 @@ router.get("/auth/user/info", getUserInformationsByToken);
 router.get("/auth/logout", logoutController);
 router.post("/movies/:movie_id/comments", createComment);
 router.get("/movies/:movie_id/comments", getCommentsByMovieId);
+router.get("/recent-comments", getRecentComments);
 router.delete("/movies/:movie_id/comments/:comment_id", deleteComment);
 
 export default router;

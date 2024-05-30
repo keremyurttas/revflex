@@ -20,6 +20,7 @@ const GlobalContext = createContext<ContextProps | undefined>(undefined);
 
 export const GlobalContextProvider = ({ children }: RootContentProps) => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [recentComments, setRecentComments] = useState<Comment[]>([]);
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [user, setUser] = useState<User>({
     username: "",
@@ -101,6 +102,26 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     }
   }, []);
 
+  const fetchRecentComments = useCallback(async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/recent-comments",
+        {
+          method: "GET",
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setRecentComments(data);
+        console.log(data);
+      } else {
+        console.error("Failed to fetch recent comments", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occured while fetching recent comments", error);
+    }
+  }, []);
+
   const createComment = async (
     comment: CommentDetails
   ): Promise<Comment | null> => {
@@ -155,6 +176,9 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         fetchPopularMovies,
         popularMovies,
         createComment,
+
+        fetchRecentComments,
+        recentComments,
       }}
     >
       {children}

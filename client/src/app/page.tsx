@@ -12,32 +12,39 @@ import { useGlobalContext } from "./Context/store";
 import { useEffect, useState } from "react";
 
 const Page = () => {
-  const { fetchPopularMovies, popularMovies } = useGlobalContext();
+  const {
+    fetchPopularMovies,
+    popularMovies,
+    recentComments,
+    fetchRecentComments,
+  } = useGlobalContext();
   const [moviesLoaded, setMoviesLoaded] = useState(false);
   const [moviesSlider, instanceRef] = useKeenSlider({
     loop: true,
     slides: {
       perView: 2.1,
-      spacing:10
+      spacing: 10,
     },
     breakpoints: {
       "(min-width: 1280px)": {
         slides: {
           perView: 5.2,
-          spacing:15
+          spacing: 15,
         },
       },
     },
   });
-  const [commentsSlider] = useKeenSlider({
+  const [commentsSlider, instanceCommentsRef] = useKeenSlider({
     loop: true,
     slides: {
       perView: 1.1,
+      spacing: 15,
     },
     breakpoints: {
       "(min-width: 1280px)": {
         slides: {
-          perView: 2.5,
+          perView: 2.4,
+          spacing: 20,
         },
       },
     },
@@ -46,17 +53,23 @@ const Page = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       await fetchPopularMovies();
+      await fetchRecentComments();
       setMoviesLoaded(true);
     };
     fetchMovies();
-  }, [fetchPopularMovies]);
+  }, [fetchPopularMovies, fetchRecentComments]);
 
   useEffect(() => {
-    if (moviesLoaded && instanceRef.current) {
+    if (instanceRef.current) {
       instanceRef.current.update();
     }
   }, [moviesLoaded, popularMovies, instanceRef]);
 
+  useEffect(() => {
+    if (instanceCommentsRef.current) {
+      instanceCommentsRef.current.update();
+    }
+  }, [recentComments, instanceCommentsRef]);
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -102,24 +115,11 @@ const Page = () => {
               Recent Comments
             </Typography>
             <Grid ref={commentsSlider} className="keen-slider">
-              <div className="keen-slider__slide  ">
-                <CommentedCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <CommentedCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <CommentedCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <CommentedCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <CommentedCard />
-              </div>
-              <div className="keen-slider__slide ">
-                <CommentedCard />
-              </div>
+              {recentComments.map((comment, index) => (
+                <div key={index} className="keen-slider__slide  ">
+                  <CommentedCard comment={comment} />
+                </div>
+              ))}
             </Grid>
           </Box>
         </Container>

@@ -12,8 +12,36 @@ import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import Avatar from "@mui/material/Avatar";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { Comment } from "@/interfaces";
+import { useEffect, useState } from "react";
 
-const CommentedCard = () => {
+const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
+  interface MovieDetails {
+    posterPath: string;
+    title: string;
+  }
+  const [movieDetails, setMovieDetails] = useState<MovieDetails>();
+  useEffect(() => {
+    const getMoviePath = async () => {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${comment.movie_id}?api_key=0c1c779b65d0bbadb26f4d37ed5eda05`,
+        {
+          method: "GET",
+        }
+      );
+      if (response.ok) {
+        const movieData = await response.json();
+        const posterPath = movieData.poster_path;
+        const title = movieData.title;
+
+        setMovieDetails({ posterPath, title });
+      }
+    };
+    if (comment.movie_id) {
+      getMoviePath();
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Card
@@ -49,7 +77,7 @@ const CommentedCard = () => {
               height: 200,
             },
           }}
-          image="https://play-lh.googleusercontent.com/sdg5tqwb-V7YZD9lG1zKbxvmpcVMxY6IHl1rWQLUYHVMvvlfV5yUQQ8RAtnwxA5wc9vIWm6nDCKeWVdv0fU"
+          image={`https://image.tmdb.org/t/p/w500/${movieDetails?.posterPath}`}
         />
         <CardContent sx={{ paddingX: 0 }}>
           <Typography
@@ -58,7 +86,7 @@ const CommentedCard = () => {
             variant="h5"
             sx={{ marginBottom: ".5rem" }}
           >
-            The Batman and Friends
+            {movieDetails?.title}
           </Typography>
           <Box
             sx={{
@@ -95,7 +123,7 @@ const CommentedCard = () => {
                     opacity: 1,
                   },
                 }}
-                value={2.5}
+                value={comment.rate}
                 precision={0.5}
                 disabled
               />
@@ -112,17 +140,7 @@ const CommentedCard = () => {
                 WebkitLineClamp: 3,
               }}
             >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi
-              rem vitae ducimus saepe sequi excepturi, veritatis veniam quos
-              maiores consectetur atque iusto expedita, sed ad! Autem rem earum
-              ad repudiandae?Lorem ipsum dolor, sit amet consectetur adipisicing
-              elit. Illum beatae cupiditate alias molestias modi a? Perspiciatis
-              non accusantium, magnam officia porro repellat cupiditate, sequi
-              corporis nemo iure deleniti omnis ipsam. Lorem ipsum dolor sit
-              amet consectetur adipisicing elit. Atque aspernatur alias ad saepe
-              aliquid deserunt voluptatem harum architecto omnis vel delectus,
-              totam impedit, accusamus possimus vero praesentium ipsum explicabo
-              sint.
+              {comment.text}
             </Typography>
           </Box>
           <Box
@@ -142,9 +160,10 @@ const CommentedCard = () => {
                 alt="commentOwner"
                 src="https://mui.com/static/images/avatar/1.jpg"
               />
-              <Typography fontWeight={600}>Elon Mask</Typography>
+              <Typography fontWeight={600}>{comment.owner_user}</Typography>
             </Box>
             <Button
+              href={`/movie/${comment.movie_id}`}
               className="hover-button"
               sx={{
                 textTransform: "none",

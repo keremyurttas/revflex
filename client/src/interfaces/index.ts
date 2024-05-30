@@ -71,7 +71,9 @@ export interface ContextProps {
   user: User;
   fetchUserDetails: () => void;
   fetchPopularMovies: () => void;
+  fetchRecentComments: () => void;
   createComment: (commentDetails: CommentDetails) => void;
+  recentComments: Comment[];
 }
 
 // export interface NewCommentWithDetails extends Comment {

@@ -32,7 +32,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
   };
 
   return (
-    <Box marginBottom={2}>
+    <Box id={comment._id} marginBottom={2}>
       <Box
         display={"flex"}
         justifyContent={"space-between"}
