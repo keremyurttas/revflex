@@ -70,7 +70,15 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
           precision={0.5}
           disabled
         />
-        <Typography>{comment.text}</Typography>
+        <Typography
+          sx={{
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            whiteSpace: "normal",
+          }}
+        >
+          {comment.text}
+        </Typography>
       </Box>
     </Box>
   );

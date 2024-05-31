@@ -35,3 +35,16 @@ body {
 * {
   font-family: var(--poppins) !important;
 }
+
+/* stylings for carousel dots */
+.slick-dots li button:before {
+  @apply bg-red-500; /* Tailwind class for the dot background color */
+
+  border-radius: 50%; /* Make it circular */
+  display: inline-block; /* Make sure it is an inline-block element */
+  transition: background-color 0.3s ease; /* Add transition for smooth color change */
+}
+.slick-dots li button:before {
+  width: 5px !important; /* Set the width of the dot */
+  height: 5px !important; /* Set the height of the dot */
+}

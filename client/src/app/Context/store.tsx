@@ -10,6 +10,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  ChangeEvent,
 } from "react";
 
 type RootContentProps = {
@@ -20,6 +21,7 @@ const GlobalContext = createContext<ContextProps | undefined>(undefined);
 
 export const GlobalContextProvider = ({ children }: RootContentProps) => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<Movie[]>([]);
   const [recentComments, setRecentComments] = useState<Comment[]>([]);
   const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
   const [user, setUser] = useState<User>({
@@ -47,7 +49,17 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       console.error("An error occurred while fetching genres:", error);
     }
   }, []);
-
+  // const handleResponse = (response) => {
+  //   return response.result.map((movie: any) => ({
+  //     id: movie.id,
+  //     backdrop_path: movie.backdrop_path,
+  //     title: movie.title,
+  //     genres: movie.genre_ids.map((id: number) => {
+  //       const genre = genres.find((g) => g.id === id);
+  //       return genre ? genre.name : "";
+  //     }),
+  //   }));
+  // };
   const fetchPopularMovies = useCallback(async () => {
     try {
       const response = await fetch(
@@ -62,7 +74,6 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         const movies = data.results.map((movie: any) => ({
           id: movie.id,
           backdrop_path: movie.backdrop_path,
@@ -154,6 +165,30 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       return null;
     }
   };
+  const searchMovieByKey = async (e: ChangeEvent<HTMLInputElement>) => {
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=0c1c779b65d0bbadb26f4d37ed5eda05&query=${e.target.value}`;
+
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        const movies = data.results.map((movie: any) => ({
+          id: movie.id,
+          backdrop_path: movie.backdrop_path,
+          title: movie.title,
+          genres: movie.genre_ids.map((id: number) => {
+            const genre = genres.find((g) => g.id === id);
+            return genre ? genre.name : "";
+          }),
+        }));
+        setSearchResults(movies);
+      } else {
+        console.error("Failed to fetch movies:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching movies", error);
+    }
+  };
 
   useEffect(() => {
     fetchGenres();
@@ -176,9 +211,10 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         fetchPopularMovies,
         popularMovies,
         createComment,
-
+        searchResults,
         fetchRecentComments,
         recentComments,
+        searchMovieByKey,
       }}
     >
       {children}

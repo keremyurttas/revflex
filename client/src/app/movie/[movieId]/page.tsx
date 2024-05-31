@@ -6,14 +6,16 @@ import {
   Divider,
   Rating,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useParams } from "next/navigation";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import LanguageIcon from "@mui/icons-material/Language";
-import { useKeenSlider } from "keen-slider/react";
+
 import { AddComment } from "@/app/components/AddComment";
-import { MovieData, Comment } from "@/interfaces";
+import { MovieData, Comment, Cast } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { MovieComment } from "@/app/components/MovieComment";
 import { useGlobalContext } from "@/app/Context/store";
@@ -104,26 +106,45 @@ const Movie = () => {
     fetchMovieData();
   }, []);
 
-  const [ref] = useKeenSlider<HTMLDivElement>({
-    loop: true,
-    slides: {
-      perView: 1.2,
-      spacing: 10,
-    },
-    breakpoints: {
-      "(min-width: 1280px)": {
-        slides: {
-          spacing: 10,
-          perView: 5,
-        },
-      },
-    },
-  });
   const handleNewComment = (newComment: Comment) => {
     setComments([newComment, ...comments]);
   };
   const handleDeleteCommentLocal = (id: string) => {
     setComments(comments.filter((comment) => comment._id !== id));
+  };
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
+
+  // Determine the number of cast members to display
+  const displayedCast = isMobile
+    ? movieData?.cast.slice(0, 2)
+    : movieData?.cast;
+
+  const Cast = (cast: Cast) => {
+    return (
+      <Box
+        flexShrink={0}
+        maxWidth={"15%"}
+        maxHeight={"300px"}
+        sx={{
+          [theme.breakpoints.down("lg")]: {
+            maxWidth: "30%",
+          },
+        }}
+      >
+        <Avatar
+          sx={{
+            width: "100%",
+            height: "80%",
+            borderRadius: ".5rem",
+          }}
+          variant="square"
+          src={`https://image.tmdb.org/t/p/w500/${cast.profile_path}`}
+        />
+        <Typography>{cast.name}</Typography>
+        <Typography fontWeight={"bold"}>{cast.character}</Typography>
+      </Box>
+    );
   };
 
   if (!movieData || !comments) {
@@ -180,7 +201,7 @@ const Movie = () => {
               >
                 {movieData.title}
               </Typography>
-              <Box>
+              <Box height={"40vh"} overflow={"auto"}>
                 <Typography
                   sx={{
                     color: theme.palette.text.primary,
@@ -195,27 +216,28 @@ const Movie = () => {
                   sx={{ letterSpacing: ".2rem" }}
                   fontSize={20}
                   variant="body2"
+                  overflow={"hidden"}
                 >
                   {movieData.overview}
                 </Typography>
-                <Box display={"flex"} gap={"1rem"} marginTop={2}>
-                  {movieData.genres.map((genre, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        [theme.breakpoints.down("lg")]: {
-                          padding: ".2rem .1rem ",
-                        },
-                        padding: ".5rem 1rem ",
-                        bgcolor: theme.palette.text.primary,
-                        width: "max-content",
-                        borderRadius: "1rem",
-                      }}
-                    >
-                      {genre.name}
-                    </Box>
-                  ))}
-                </Box>
+              </Box>
+              <Box display={"flex"} gap={"1rem"} marginTop={2}>
+                {movieData.genres.map((genre, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      [theme.breakpoints.down("lg")]: {
+                        padding: ".2rem .1rem ",
+                      },
+                      padding: ".5rem 1rem ",
+                      bgcolor: theme.palette.text.primary,
+                      width: "max-content",
+                      borderRadius: "1rem",
+                    }}
+                  >
+                    {genre.name}
+                  </Box>
+                ))}
               </Box>
             </Box>
           </Box>
@@ -237,53 +259,21 @@ const Movie = () => {
             />
             <Box
               sx={{
-                display: "flex",
                 position: "relative",
-                overflowX: "hidden",
-                overflowY: "visible",
               }}
-              ref={ref}
-              className="keen-slider"
             >
               <Box
-                maxWidth={"120px"}
-                maxHeight={"300px"}
-                className={"keen-slider__slide"}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
               >
-                <Avatar
-                  sx={{
-                    width: "100%",
-                    height: "80%",
-                    borderRadius: ".5rem",
-                    objectFit: "cover",
-                  }}
-                  variant="square"
-                  src={`https://image.tmdb.org/t/p/w500/${movieData.director.profile_path}`}
-                />
-                <Typography>{movieData.director.name}</Typography>
-                <Typography fontWeight={"bold"}>Director</Typography>
-              </Box>
+                <Cast {...{ ...movieData.director, character: "Director" }} />
 
-              {movieData.cast.map((cast, index) => (
-                <Box
-                  key={index}
-                  maxWidth={"120px"}
-                  maxHeight={"300px"}
-                  className={"keen-slider__slide"}
-                >
-                  <Avatar
-                    sx={{
-                      width: "100%",
-                      height: "80%",
-                      borderRadius: ".5rem",
-                    }}
-                    variant="square"
-                    src={`https://image.tmdb.org/t/p/w500/${cast.profile_path}`}
-                  />
-                  <Typography>{cast.name}</Typography>
-                  <Typography fontWeight={"bold"}>{cast.character}</Typography>
-                </Box>
-              ))}
+                {displayedCast?.map((cast, index) => (
+                  <Cast key={index} {...cast} />
+                ))}
+              </Box>
             </Box>
           </Box>
         </Box>

@@ -6,6 +6,7 @@ import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import MovieIcon from "@mui/icons-material/Movie";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { handleNoImage } from "../utils/imageUtils";
 
 interface MovieCardProps {
   className?: string;
@@ -21,6 +22,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
   title,
   genres,
 }) => {
+  const defaultBackdropPath =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9dI2vOEBq9ApxwOBoucjQHHZW1DWpMdwQgA&s";
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -29,14 +32,16 @@ const MovieCard: React.FC<MovieCardProps> = ({
         className={className}
         sx={{
           cursor: "pointer",
-          width: 200,
+          marginRight: "1rem",
           position: "relative",
-          height: 400,
+          height: "100%",
           bgcolor: "transparent",
           color: theme.palette.primary.main,
+          // Ensure the content does not overflow
+          display: "flex", // Make sure the children respect the container's dimensions
+          flexDirection: "column",
           [theme.breakpoints.down("lg")]: {
-            height: 300,
-            width: 150,
+            height: "230px",
           },
           transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
           "&:hover": {
@@ -47,17 +52,22 @@ const MovieCard: React.FC<MovieCardProps> = ({
       >
         <CardMedia
           component="img"
-          alt="green iguana"
+          alt={title}
           sx={{
-            height: 300,
+            width: "100%", // Ensure the image takes up the full width of its container
+            height: "300px", // Adjust the height automatically to maintain aspect ratio
             borderRadius: "8px",
             [theme.breakpoints.down("lg")]: {
-              height: 200,
+              height: "150px",
             },
+            flexShrink: 0, // Prevent the image from shrinking
           }}
-          image={`https://image.tmdb.org/t/p/w500/${backdrop_path}`}
+          image={handleNoImage(
+            backdrop_path,
+            `https://image.tmdb.org/t/p/w500/${backdrop_path}`
+          )}
         />
-        <CardContent sx={{ paddingX: 0 }}>
+        <CardContent sx={{ paddingX: 0, flexGrow: 1 }}>
           <Typography fontSize={".9rem"} fontWeight={600} variant="h5">
             {title}
           </Typography>

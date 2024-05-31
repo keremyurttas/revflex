@@ -3,13 +3,12 @@ import { Box, Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
-import Grid from "@mui/material/Grid";
 import MovieCard from "./components/MovieCard";
-import { useKeenSlider } from "keen-slider/react";
 import CommentedCard from "./components/CommentedCard";
-import "keen-slider/keen-slider.min.css";
 import { useGlobalContext } from "./Context/store";
 import { useEffect, useState } from "react";
+import { Movie } from "@/interfaces";
+import Slider from "react-slick";
 
 const Page = () => {
   const {
@@ -17,38 +16,62 @@ const Page = () => {
     popularMovies,
     recentComments,
     fetchRecentComments,
+    searchResults,
   } = useGlobalContext();
   const [moviesLoaded, setMoviesLoaded] = useState(false);
-  const [moviesSlider, instanceRef] = useKeenSlider({
-    loop: true,
-    slides: {
-      perView: 2.1,
-      spacing: 10,
-    },
-    breakpoints: {
-      "(min-width: 1280px)": {
-        slides: {
-          perView: 5.2,
-          spacing: 15,
+
+  const commentsSliderSettings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 2,
+    dots: true,
+    arrows: false,
+
+    responsive: [
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
         },
       },
-    },
-  });
-  const [commentsSlider, instanceCommentsRef] = useKeenSlider({
-    loop: true,
-    slides: {
-      perView: 1.1,
-      spacing: 15,
-    },
-    breakpoints: {
-      "(min-width: 1280px)": {
-        slides: {
-          perView: 2.4,
-          spacing: 20,
+    ],
+  };
+  const moviesSliderContainer = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 5,
+    dots: true,
+    slidesToScroll: 5,
+    arrows: false,
+
+    responsive: [
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
         },
       },
-    },
-  });
+    ],
+  };
+
+  // const [commentsSlider, instanceCommentsRef] = useKeenSlider({
+  //   loop: true,
+  //   slides: {
+  //     perView: 1.1,
+  //     spacing: 15,
+  //   },
+  //   breakpoints: {
+  //     "(min-width: 1280px)": {
+  //       slides: {
+  //         perView: 2.4,
+  //         spacing: 20,
+  //       },
+  //     },
+  //   },
+  // });
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -59,17 +82,25 @@ const Page = () => {
     fetchMovies();
   }, [fetchPopularMovies, fetchRecentComments]);
 
-  useEffect(() => {
-    if (instanceRef.current) {
-      instanceRef.current.update();
-    }
-  }, [moviesLoaded, popularMovies, instanceRef]);
+  // useEffect(() => {
+  //   if (instanceRef.current) {
+  //     instanceRef.current.update();
+  //   }
+  // }, [popularMovies, moviesLoaded, instanceRef]);
 
-  useEffect(() => {
-    if (instanceCommentsRef.current) {
-      instanceCommentsRef.current.update();
-    }
-  }, [recentComments, instanceCommentsRef]);
+  // useEffect(() => {
+  //   if (instanceCommentsRef.current) {
+  //     instanceCommentsRef.current.update();
+  //   }
+  // }, [recentComments, instanceCommentsRef]);
+
+  const renderMovies = (movies: Movie[]) => {
+    return movies.map((movie) => (
+      <div key={movie.id} className="">
+        <MovieCard {...movie} />
+      </div>
+    ));
+  };
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -85,27 +116,26 @@ const Page = () => {
               paddingX: "1rem",
               marginY: 0,
             },
+            height: "100vh",
           }}
         >
-          <Box sx={{ marginBottom: "1rem" }}>
+          <Box sx={{ marginBottom: "4rem", position: "relative" }}>
             <Typography
               variant="h6"
               fontSize={"1rem"}
               color={theme.palette.text.primary}
               sx={{ textTransform: "uppercase", marginBottom: "1rem" }}
             >
-              Popular Movies
+              {searchResults.length > 0 ? "Search Results" : "Popular Movies"}
             </Typography>
-            <Grid ref={moviesSlider} className="keen-slider">
-              {popularMovies &&
-                popularMovies.map((movie) => (
-                  <div key={movie.id} className="keen-slider__slide  ">
-                    <MovieCard {...movie} />
-                  </div>
-                ))}
-            </Grid>
+
+            <Slider {...moviesSliderContainer}>
+              {searchResults.length > 0
+                ? renderMovies(searchResults)
+                : renderMovies(popularMovies)}
+            </Slider>
           </Box>
-          <Box>
+          <Box sx={{ position: "relative", height: "40%" }}>
             <Typography
               variant="h6"
               fontSize={"1rem"}
@@ -114,13 +144,18 @@ const Page = () => {
             >
               Recent Comments
             </Typography>
-            <Grid ref={commentsSlider} className="keen-slider">
+            {/* <Grid ref={commentsSlider} className="keen-slider">
               {recentComments.map((comment, index) => (
                 <div key={index} className="keen-slider__slide  ">
                   <CommentedCard comment={comment} />
                 </div>
               ))}
-            </Grid>
+            </Grid> */}
+            <Slider {...commentsSliderSettings}>
+              {recentComments.map((comment, index) => (
+                <CommentedCard key={index} comment={comment} />
+              ))}
+            </Slider>
           </Box>
         </Container>
       </ThemeProvider>

@@ -12,14 +12,12 @@ import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import Avatar from "@mui/material/Avatar";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { Comment } from "@/interfaces";
+import { Comment, MovieDetails } from "@/interfaces";
 import { useEffect, useState } from "react";
+import { handleNoImage } from "../utils/imageUtils";
+import { formatDistanceToNow } from "date-fns";
 
 const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
-  interface MovieDetails {
-    posterPath: string;
-    title: string;
-  }
   const [movieDetails, setMovieDetails] = useState<MovieDetails>();
   useEffect(() => {
     const getMoviePath = async () => {
@@ -40,23 +38,24 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
     if (comment.movie_id) {
       getMoviePath();
     }
+    console.log(comment.date);
   }, []);
-
+  const formatRelativeTime = () => {
+    const date = new Date(comment.date);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
   return (
     <ThemeProvider theme={theme}>
       <Card
         tabIndex={0}
         sx={{
           cursor: "pointer",
-          width: 450,
+          marginRight: "1rem",
           position: "relative",
-          height: 500,
+          height: "100%",
           bgcolor: "transparent",
           color: theme.palette.primary.main,
-          [theme.breakpoints.down("lg")]: {
-            height: 400,
-            width: 300,
-          },
+          [theme.breakpoints.down("lg")]: {},
           transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
           "&:hover": {
             transform: "scale(1.05)",
@@ -77,7 +76,10 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
               height: 200,
             },
           }}
-          image={`https://image.tmdb.org/t/p/w500/${movieDetails?.posterPath}`}
+          image={handleNoImage(
+            movieDetails?.posterPath,
+            `https://image.tmdb.org/t/p/w500/${movieDetails?.posterPath}`
+          )}
         />
         <CardContent sx={{ paddingX: 0 }}>
           <Typography
@@ -104,7 +106,7 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
                 color={theme.palette.secondary.main}
                 variant="caption"
               >
-                20 min ago
+                {formatRelativeTime()}
               </Typography>
               {/* <Typography
                 fontSize={"1rem"}

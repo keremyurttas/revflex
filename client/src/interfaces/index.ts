@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 export interface Comment {
   _id: string;
   movie_id: string;
@@ -66,14 +66,25 @@ export interface CommentDetails {
 export interface ContextProps {
   activeModal: string | null;
   popularMovies: Movie[];
+  searchResults: Movie[];
   setActiveModal: Dispatch<SetStateAction<string | null>>;
   setUser: Dispatch<SetStateAction<User>>;
   user: User;
+  searchMovieByKey: (e: ChangeEvent<HTMLInputElement>) => void;
   fetchUserDetails: () => void;
   fetchPopularMovies: () => void;
   fetchRecentComments: () => void;
   createComment: (commentDetails: CommentDetails) => void;
   recentComments: Comment[];
+}
+export interface MovieDetails {
+  posterPath: string;
+  title: string;
+}
+export interface Cast {
+  name: string;
+  character?: string;
+  profile_path: string;
 }
 
 // export interface NewCommentWithDetails extends Comment {

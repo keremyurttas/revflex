@@ -13,6 +13,7 @@ import Fade from "@mui/material/Fade";
 import { FC, useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/Context/store";
 import { ErrorTypo } from "./ErrorTypo";
+import Slider from "react-slick";
 
 interface LoginModalProps {
   open: boolean;
@@ -23,6 +24,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
   const { setActiveModal, fetchUserDetails } = useGlobalContext();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const [formErrors, setFormErrors] = useState({
     username: "",
     password: "",
@@ -236,6 +238,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
                 >
                   Log In
                 </Button>
+
                 <Typography
                   color={theme.palette.primary.main}
                   sx={{ marginX: "auto" }}

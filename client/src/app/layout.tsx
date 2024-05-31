@@ -4,6 +4,8 @@ import "./globals.css";
 import { ReactNode } from "react";
 import ClientProvider from "./providers/ClientProvider";
 import RootContent from "./layouts/RootContent";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",

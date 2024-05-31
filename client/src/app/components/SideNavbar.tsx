@@ -26,7 +26,8 @@ const SideNavbar = () => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [showNavbar, setShowNavbar] = useState(false);
   const [isSlideExitCompleted, setIsSlideExitCompleted] = useState(true);
-  const { setActiveModal, user, fetchUserDetails } = useGlobalContext();
+  const { setActiveModal, user, fetchUserDetails, searchMovieByKey } =
+    useGlobalContext();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
@@ -129,6 +130,7 @@ const SideNavbar = () => {
             <SearchIcon color="primary" />
 
             <InputBase
+              onChange={searchMovieByKey}
               inputProps={{
                 "aria-label": "search google maps", // Change label color here
               }}
