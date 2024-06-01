@@ -212,6 +212,7 @@ const SideNavbar = () => {
             >
               <Box sx={{ display: "flex", gap: "2rem", alignItems: "center" }}>
                 <Avatar alt="Username" src={user.avatar} />
+
                 <Box>
                   <Typography variant="h6">{user.prefferedName}</Typography>
                   <Typography

@@ -4,6 +4,7 @@ import {
   loginController,
   getUserInformationsByToken,
   logoutController,
+  likeMovieToggle,
 } from "../controllers/auths.js";
 import {
   createComment,
@@ -22,5 +23,6 @@ router.post("/movies/:movie_id/comments", createComment);
 router.get("/movies/:movie_id/comments", getCommentsByMovieId);
 router.get("/recent-comments", getRecentComments);
 router.delete("/movies/:movie_id/comments/:comment_id", deleteComment);
+router.patch("/:user_id/liked/:movie_id", likeMovieToggle);
 
 export default router;

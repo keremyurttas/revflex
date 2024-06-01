@@ -2,6 +2,17 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+const likedMovieSchema = new Schema({
+  movie_id: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const userSchema = new Schema({
   username: { type: String, required: true, unique: true },
   password: {
@@ -18,6 +29,10 @@ const userSchema = new Schema({
     required: true,
   },
   avatar: { type: String },
+  likedMovies: {
+    type: [likedMovieSchema],
+    default: [],
+  },
 });
 const User = mongoose.model("User", userSchema);
 

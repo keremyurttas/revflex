@@ -42,8 +42,12 @@ export interface Movie {
   backdrop_path: string;
   title: string;
   genres: string[];
+  isLiked: boolean;
 }
-
+export interface LikedMovie {
+  movie_id: string;
+  date: number;
+}
 export interface User {
   username: string;
   prefferedName: string;
@@ -51,6 +55,7 @@ export interface User {
   likes: string[];
   avatar: string;
   id: string;
+  likedMovies?: LikedMovie[];
 }
 
 export interface Genre {

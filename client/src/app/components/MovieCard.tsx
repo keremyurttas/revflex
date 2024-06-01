@@ -1,11 +1,14 @@
 "use client";
 import { Box, Button, CardContent, Typography } from "@mui/material";
-import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import theme from "@/theme/theme";
 import { ThemeProvider } from "@emotion/react";
 import MovieIcon from "@mui/icons-material/Movie";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useGlobalContext } from "../Context/store";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { handleNoImage } from "../utils/imageUtils";
 
 interface MovieCardProps {
@@ -14,93 +17,138 @@ interface MovieCardProps {
   backdrop_path: string;
   title: string;
   genres: string[];
+  isLiked: boolean;
 }
+
 const MovieCard: React.FC<MovieCardProps> = ({
   className,
   id,
   backdrop_path,
   title,
   genres,
+  isLiked,
 }) => {
-  const defaultBackdropPath =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9dI2vOEBq9ApxwOBoucjQHHZW1DWpMdwQgA&s";
+  const { user } = useGlobalContext();
+  const [localIsLiked, setLocalIsLiked] = useState<boolean>(isLiked);
+  const [isLikeRequesting, setIsLikeRequesting] = useState<boolean>(false);
+
+  useEffect(() => {
+    setLocalIsLiked(isLiked);
+  }, [isLiked]);
+
+  const handleLikeToggle = async (newState: boolean) => {
+    // Prevent multiple clicks while the request is in progress
+    if (isLikeRequesting) return;
+
+    // Set the state to indicate that a request is in progress
+    setIsLikeRequesting(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/${user.id}/liked/${id}`,
+        {
+          method: "PATCH",
+        }
+      );
+      if (response.ok) {
+        setLocalIsLiked(newState);
+      }
+    } catch (error) {
+      console.error("An error occurred while handling the like toggle:", error);
+    } finally {
+      // Reset the state after the request is finished
+      setIsLikeRequesting(false);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        component={"a"}
-        href={`/movie/${id}`}
-        className={className}
-        sx={{
-          cursor: "pointer",
-          marginRight: "1rem",
-          position: "relative",
-          height: "100%",
-          bgcolor: "transparent",
-          color: theme.palette.primary.main,
-          // Ensure the content does not overflow
-          display: "flex", // Make sure the children respect the container's dimensions
-          flexDirection: "column",
-          [theme.breakpoints.down("lg")]: {
-            height: "230px",
-          },
-          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            transform: "scale(1.02)",
-            boxShadow: theme.shadows[5],
-          },
-        }}
-      >
-        <CardMedia
-          component="img"
-          alt={title}
+      <Link href={`/movie/${id}`} passHref>
+        <Box
+          className={className}
           sx={{
-            width: "100%", // Ensure the image takes up the full width of its container
-            height: "300px", // Adjust the height automatically to maintain aspect ratio
-            borderRadius: "8px",
+            cursor: "pointer",
+            marginRight: "1rem",
+            position: "relative",
+            height: "100%",
+            bgcolor: "transparent",
+            color: theme.palette.primary.main,
+            display: "flex",
+            flexDirection: "column",
             [theme.breakpoints.down("lg")]: {
-              height: "150px",
+              height: "230px",
             },
-            flexShrink: 0, // Prevent the image from shrinking
+            transition:
+              "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+            "&:hover": {
+              transform: "scale(1.02)",
+              boxShadow: theme.shadows[5],
+            },
           }}
-          image={handleNoImage(
-            backdrop_path,
-            `https://image.tmdb.org/t/p/w500/${backdrop_path}`
-          )}
-        />
-        <CardContent sx={{ paddingX: 0, flexGrow: 1 }}>
-          <Typography fontSize={".9rem"} fontWeight={600} variant="h5">
-            {title}
-          </Typography>
-          <Box
+        >
+          <CardMedia
+            component="img"
+            alt={title}
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              width: "100%", // Ensure the image takes up the full width of its container
+              height: "300px", // Adjust the height automatically to maintain aspect ratio
+              borderRadius: "8px",
+              [theme.breakpoints.down("lg")]: {
+                height: "150px",
+              },
+              flexShrink: 0, // Prevent the image from shrinking
             }}
-          >
+            image={handleNoImage(
+              backdrop_path,
+              `https://image.tmdb.org/t/p/w500/${backdrop_path}`
+            )}
+          />
+          <CardContent sx={{ paddingX: 0, flexGrow: 1 }}>
+            <Typography fontSize={".9rem"} fontWeight={600} variant="h5">
+              {title}
+            </Typography>
             <Box
               sx={{
-                color: theme.palette.text.primary,
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                gap: ".2rem",
               }}
             >
-              <MovieIcon sx={{ width: 16, height: 16 }} />
-              <Typography variant="body1">{genres[0]}</Typography>
+              <Box
+                sx={{
+                  color: theme.palette.text.primary,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: ".2rem",
+                }}
+              >
+                <MovieIcon sx={{ width: 16, height: 16 }} />
+                <Typography variant="body1">{genres[0]}</Typography>
+              </Box>
+              <Button
+                sx={{
+                  padding: 0,
+                  minWidth: 0,
+                }}
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent the default link action
+                  e.stopPropagation(); // Stop the event from propagating
+                  handleLikeToggle(!localIsLiked); // Toggle the like state
+                }}
+                disabled={isLikeRequesting}
+              >
+                {localIsLiked ? (
+                  <FavoriteIcon color="secondary" fontSize="small" />
+                ) : (
+                  <FavoriteBorderIcon color="secondary" fontSize="small" />
+                )}
+              </Button>
             </Box>
-            <Button
-              sx={{
-                padding: 0,
-                minWidth: 0,
-              }}
-            >
-              <FavoriteBorderIcon fontSize="small" />
-            </Button>
-          </Box>
-        </CardContent>
-      </Box>
+          </CardContent>
+        </Box>
+      </Link>
     </ThemeProvider>
   );
 };
+
 export default MovieCard;

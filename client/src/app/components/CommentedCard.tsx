@@ -38,7 +38,6 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
     if (comment.movie_id) {
       getMoviePath();
     }
-    console.log(comment.date);
   }, []);
   const formatRelativeTime = () => {
     const date = new Date(comment.date);
@@ -108,13 +107,7 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
               >
                 {formatRelativeTime()}
               </Typography>
-              {/* <Typography
-                fontSize={"1rem"}
-                color={theme.palette.secondary.main}
-                variant="caption"
-              >
-                4/5
-              </Typography> */}
+
               <Rating
                 sx={{
                   "& .MuiRating-iconFilled, & .MuiRating-iconEmpty": {

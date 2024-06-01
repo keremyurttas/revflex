@@ -74,23 +74,33 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
-        const movies = data.results.map((movie: any) => ({
-          id: movie.id,
-          backdrop_path: movie.backdrop_path,
-          title: movie.title,
-          genres: movie.genre_ids.map((id: number) => {
-            const genre = genres.find((g) => g.id === id);
-            return genre ? genre.name : "";
-          }),
-        }));
+        const userLikedMovieIds =
+          user?.likedMovies?.map((likedMovie) => likedMovie.movie_id) || [];
+
+        const movies = data.results.map((movie: any) => {
+          const movieIdStr = movie.id.toString();
+          const isLiked = userLikedMovieIds.includes(movieIdStr);
+
+          return {
+            id: movie.id,
+            backdrop_path: movie.backdrop_path,
+            title: movie.title,
+            isLiked: isLiked,
+            genres: movie.genre_ids.map((id: number) => {
+              const genre = genres.find((genre) => genre.id === id);
+              return genre ? genre.name : "";
+            }),
+          };
+        });
         setPopularMovies(movies);
+
       } else {
         console.error("Failed to fetch popular movies:", response.statusText);
       }
     } catch (error) {
       console.error("An error occurred while fetching popular movies:", error);
     }
-  }, [genres]);
+  }, [genres, user]);
 
   const fetchUserDetails = useCallback(async () => {
     try {
@@ -104,6 +114,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
+  
         setUser(data);
       } else {
         console.error("Failed to fetch user details:", response.statusText);
@@ -124,7 +135,6 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       if (response.ok) {
         const data = await response.json();
         setRecentComments(data);
-        console.log(data);
       } else {
         console.error("Failed to fetch recent comments", response.statusText);
       }

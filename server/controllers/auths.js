@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/userSchema.js";
-import upload from "../multerConfig.js";
 const jwtSecret = process.env.JWT_SECRET;
 
 export const registerController = async (req, res, next) => {
@@ -91,35 +90,37 @@ export const loginController = async (req, res) => {
     });
   }
 };
-export const getUserInformationsByToken = (req, res) => {
+export const getUserInformationsByToken = async (req, res) => {
   const token = req.cookies.jwt;
-  return new Promise((resolve, reject) => {
-    if (!token) {
-      reject("Token not provided");
-    } else {
-      jwt.verify(token, jwtSecret, (err, decodedToken) => {
-        if (err) {
-          reject("Invalid token");
-        } else {
-          // Resolve the promise with the username and role
-          resolve({
-            username: decodedToken.username,
-            genres: decodedToken.genres,
-            prefferedName: decodedToken.prefferedName,
-            id: decodedToken.id,
-          });
-        }
-      });
+
+  if (!token) {
+    return res.status(401).json({ error: "Token not provided" });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, jwtSecret);
+    const userId = decodedToken.id;
+
+    // Fetch user information from the database
+    const user = await User.findById(userId).select("-password"); // Exclude the password field
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-  })
-    .then((userInfo) => {
-      // Send the response with the username and role
-      res.json(userInfo);
-    })
-    .catch((error) => {
-      // Handle the error
-      res.status(401).json({ error: error });
+
+    // Respond with user information
+    res.json({
+      username: user.username,
+      genres: user.genres,
+      prefferedName: user.prefferedName,
+      id: user._id,
+      likedMovies: user.likedMovies,
+      avatar: user.avatar,
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ error: "Invalid token" });
+  }
 };
 export const logoutController = (req, res) => {
   // Clear the JWT cookie
@@ -132,4 +133,42 @@ export const logoutController = (req, res) => {
 
   // Send a JSON response
   res.status(200).json({ message: "Logout successful" });
+};
+
+export const likeMovieToggle = async (req, res) => {
+  const { user_id, movie_id } = req.params;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(user_id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the movie is already liked by the user
+    const isLiked = user.likedMovies.some(
+      (likedMovie) => likedMovie.movie_id === movie_id
+    );
+
+    if (isLiked) {
+      // If the movie is already liked, remove it from likedMovies (dislike)
+      user.likedMovies = user.likedMovies.filter(
+        (likedMovie) => likedMovie.movie_id !== movie_id
+      );
+    } else {
+      // If the movie is not liked, add it to likedMovies (like)
+      user.likedMovies.push({ movie_id, date: new Date() });
+    }
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while liking/disliking the movie" });
+  }
 };
