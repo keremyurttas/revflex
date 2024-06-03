@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import avatarSchema from './avatarSchema.js'; 
 
 const { Schema } = mongoose;
 
@@ -28,7 +29,7 @@ const userSchema = new Schema({
     type: Array,
     required: true,
   },
-  avatar: { type: String },
+  avatar: avatarSchema,
   likedMovies: {
     type: [likedMovieSchema],
     default: [],

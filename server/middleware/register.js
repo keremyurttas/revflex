@@ -22,4 +22,5 @@ export const registerMiddleware = (req, res, next) => {
   } else {
     next();
   }
+  
 };

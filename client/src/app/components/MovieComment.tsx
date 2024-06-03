@@ -2,6 +2,7 @@ import theme from "@/theme/theme";
 import { Box, Avatar, Typography, Rating, Button } from "@mui/material";
 import { Comment, MovieCommentProps } from "@/interfaces";
 import { useGlobalContext } from "../Context/store";
+import { CircleAvatar } from "./CircleAvatar";
 
 export const MovieComment: React.FC<MovieCommentProps> = ({
   comment,
@@ -22,6 +23,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
       `http://localhost:8000/api/movies/${comment.movie_id}/comments/${comment._id}`,
       {
         method: "DELETE",
+        credentials: "include",
       }
     );
     if (response.ok) {
@@ -40,7 +42,12 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
         marginBottom={".5rem"}
       >
         <Box display={"flex"} gap={"1rem"}>
-          <Avatar />
+          <CircleAvatar id={comment.owner_id} owner={comment.owner_user} ></CircleAvatar>
+          {/* <Avatar
+            src={`http://localhost:8000/api/avatars/${comment.owner_id}`}
+          >
+            {comment.owner_user[0].toUpperCase()}
+          </Avatar> */}
           <Typography
             color={comment.owner_id === user.id ? "secondary" : "primary"}
             variant="body2"

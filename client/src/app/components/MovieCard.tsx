@@ -18,6 +18,7 @@ interface MovieCardProps {
   title: string;
   genres: string[];
   isLiked: boolean;
+  likeStatusChanged: (arg0: number) => void;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -27,6 +28,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
   title,
   genres,
   isLiked,
+  likeStatusChanged,
 }) => {
   const { user } = useGlobalContext();
   const [localIsLiked, setLocalIsLiked] = useState<boolean>(isLiked);
@@ -48,9 +50,13 @@ const MovieCard: React.FC<MovieCardProps> = ({
         `http://localhost:8000/api/${user.id}/liked/${id}`,
         {
           method: "PATCH",
+          credentials: "include",
         }
       );
       if (response.ok) {
+        if (newState == false) {
+          likeStatusChanged(id);
+        }
         setLocalIsLiked(newState);
       }
     } catch (error) {
@@ -60,7 +66,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
       setIsLikeRequesting(false);
     }
   };
-
   return (
     <ThemeProvider theme={theme}>
       <Link href={`/movie/${id}`} passHref>

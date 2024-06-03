@@ -9,13 +9,17 @@ export interface Comment {
   date: number;
 }
 export interface AddCommentProps {
-  onNewComment: (comment: Comment) => void;
+  onNewComment: (comment: Comment | void) => void;
 }
 export interface MovieCommentProps {
   deleteCommentLocal: (id: string) => void;
   comment: Comment;
 }
-
+export interface LikedMovie {
+  movie_id: string;
+  date: Date;
+  _id: string;
+}
 export interface MovieData {
   title: string;
   overview: string;
@@ -46,7 +50,7 @@ export interface Movie {
 }
 export interface LikedMovie {
   movie_id: string;
-  date: number;
+  date: Date;
 }
 export interface User {
   username: string;
@@ -81,6 +85,7 @@ export interface ContextProps {
   fetchRecentComments: () => void;
   createComment: (commentDetails: CommentDetails) => void;
   recentComments: Comment[];
+  getLikedMovies: () => Promise<any[] | undefined>;
 }
 export interface MovieDetails {
   posterPath: string;

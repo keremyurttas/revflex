@@ -1,6 +1,6 @@
 "use client";
 
-import { ContextProps, Genre, CommentDetails, Movie, User } from "@/interfaces";
+import { ContextProps, Genre, CommentDetails, Movie, User, LikedMovie } from "@/interfaces";
 import {
   createContext,
   useContext,
@@ -93,7 +93,6 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
           };
         });
         setPopularMovies(movies);
-
       } else {
         console.error("Failed to fetch popular movies:", response.statusText);
       }
@@ -106,15 +105,12 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     try {
       const response = await fetch("http://localhost:8000/api/auth/user/info", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+
         credentials: "include",
       });
 
       if (response.ok) {
         const data = await response.json();
-  
         setUser(data);
       } else {
         console.error("Failed to fetch user details:", response.statusText);
@@ -124,6 +120,41 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     }
   }, []);
 
+  const getLikedMovies = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/${user.id}/liked`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const ids = await response.json();
+      console.log(ids.likedMoviesIds)
+      const likedMoviesPromises = ids.likedMoviesIds.map(async (likedMovie:LikedMovie) => {
+        const secResp = await fetch(
+          `https://api.themoviedb.org/3/movie/${likedMovie.movie_id}?api_key=0c1c779b65d0bbadb26f4d37ed5eda05`
+        );
+        if (!secResp.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await secResp.json();
+        return {
+          id: data.id,
+          backdrop_path: data.backdrop_path,
+          title: data.title,
+          genres: data.genres.map((genre:Genre) => genre.name),
+          isLiked: true,
+        };
+      });
+
+      const likedMovies = await Promise.all(likedMoviesPromises);
+      console.log(likedMovies); // You can use this data in your state or however needed
+      return likedMovies;
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const fetchRecentComments = useCallback(async () => {
     try {
       const response = await fetch(
@@ -159,6 +190,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
             owner_id: user.id,
             owner_user: user.username,
           }),
+          credentials: "include",
         }
       );
 
@@ -225,6 +257,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         fetchRecentComments,
         recentComments,
         searchMovieByKey,
+        getLikedMovies,
       }}
     >
       {children}

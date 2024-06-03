@@ -35,7 +35,8 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [prefferedName, setPrefferedName] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [formErrors, setFormErrors] = useState({
     username: "",
     password: "",
@@ -126,32 +127,40 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (secondValidate() && firstValidate()) {
-      const response = await fetch("http://localhost:8000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          prefferedName,
-          avatar,
-          genres,
-        }),
-        credentials: "include",
-      });
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("prefferedName", prefferedName);
+      formData.append("genres", JSON.stringify(favGenres)); // Assuming genres is an array
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+      try {
+        const response = await fetch(
+          "http://localhost:8000/api/auth/register",
+          {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setActiveModal(null);
-        fetchUserDetails();
-      } else {
-        const errorMessage = await response.json(); // Get error message from the response
-        setFormErrors((prevErrors) => ({
-          ...prevErrors,
-          register: `Register failed: ${errorMessage.message}`,
-        }));
+        if (response.ok) {
+          const data = await response.json();
+          setActiveModal(null);
+          fetchUserDetails();
+        } else {
+          const errorMessage = await response.json(); // Get error message from the response
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            register: `Register failed: ${errorMessage.message}`,
+          }));
+        }
+      } catch (error) {
+        console.error(
+          "An error occurred while handling the register request:",
+          error
+        );
       }
     }
   };
@@ -176,9 +185,28 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
   };
 
   const ImageInput = () => {
-    const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const getAvatarSrc = (): string | undefined => {
+      if (avatar === null) {
+        return defaultAvatar;
+      }
+      if (typeof avatar === "string") {
+        return avatar;
+      }
+      if (avatar instanceof ArrayBuffer) {
+        return Buffer.from(avatar).toString("base64");
+      }
+      return undefined;
+    };
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files[0]) {
-        setAvatar(URL.createObjectURL(event.target.files[0]));
+        const file = event.target.files[0];
+        setAvatarFile(file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setAvatar(reader.result);
+        };
+        reader.readAsDataURL(file);
       }
     };
     const defaultAvatar =
@@ -190,7 +218,7 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
       >
         <Box
           component="img"
-          src={avatar || defaultAvatar}
+          src={getAvatarSrc()}
           alt="Selected"
           sx={{
             width: 100,

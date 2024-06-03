@@ -1,53 +1,74 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/userSchema.js";
+
 const jwtSecret = process.env.JWT_SECRET;
 
 export const registerController = async (req, res, next) => {
-  const { username, password, prefferedName, genres } = req.body;
-  const avatar = req.file ? req.file.filename : null; // Get the avatar file name
-
   try {
+    const { username, password, prefferedName, genres } = req.body;
+
+    if (!username || !password || !prefferedName || !genres) {
+      return res.status(400).json({
+        message: "Missing required fields",
+      });
+    }
+
     const isUsernameExist = await User.findOne({ username });
     if (isUsernameExist) {
       return res.status(409).json({
         message: "Username already exists",
       });
     }
-    bcrypt.hash(password, 10).then(async (hash) => {
-      User.create({ username, password: hash, prefferedName, genres }).then(
-        (user) => {
-          const maxAge = 3 * 60 * 60;
-          const token = jwt.sign(
-            {
-              id: user._id,
-              username,
-              prefferedName,
-              genres,
-            },
-            jwtSecret,
-            {
-              expiresIn: maxAge, //3hrs in sec
-            }
-          );
-          res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, //3hrs in ms
-          });
-          // res.cookie("username", user.username);
-          res.status(201).json({
-            user,
-          });
-        }
-      );
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      username,
+      password: hashedPassword,
+      prefferedName,
+      genres,
+    });
+
+    if (req.file) {
+      user.avatar = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+      };
+    }
+    await user.save();
+
+    const maxAge = 3 * 60 * 60;
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username,
+        prefferedName,
+        genres: JSON.parse(genres),
+      },
+      jwtSecret,
+      {
+        expiresIn: maxAge,
+      }
+    );
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: maxAge * 1000,
+    });
+
+    res.status(201).json({
+      user,
     });
   } catch (err) {
-    res.status(401).json({
-      message: "User not successful created",
-      error: err.mesage,
+    console.error("Error during user registration:", err);
+    res.status(500).json({
+      message: "An error occurred during user registration",
+      error: err.message,
     });
   }
 };
+
 export const loginController = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -122,6 +143,50 @@ export const getUserInformationsByToken = async (req, res) => {
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+export const updateAvatarController = async (req, res) => {
+  const userId = req.user.id; // Assuming user ID is added to req.user by authenticateToken middleware
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        avatar: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+        },
+      },
+      { new: true }
+    ).select("-password"); // Exclude password from the result
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getAvatarById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user || !user.avatar || !user.avatar.data) {
+      return res.status(404).send("Avatar not found");
+    }
+    res.set("Content-Type", user.avatar.contentType);
+    res.send(user.avatar.data);
+  } catch (error) {
+    res.status(500).send("An error occurred while retrieving the avatar");
+  }
+};
+
 export const logoutController = (req, res) => {
   // Clear the JWT cookie
   res.cookie("jwt", "", {
@@ -170,5 +235,22 @@ export const likeMovieToggle = async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while liking/disliking the movie" });
+  }
+};
+
+export const getLikedMoviesIds = async (req, res) => {
+  const { user_id } = req.params;
+  try {
+    const user = await User.findById(user_id).populate("likedMovies");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const likedMoviesIds = user.likedMovies;
+
+    res.status(200).json({ likedMoviesIds });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while getting likes" });
   }
 };

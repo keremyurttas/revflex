@@ -10,14 +10,13 @@ import HomeIcon from "@mui/icons-material/Home";
 import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import React, { useEffect, useState } from "react";
-import Divider from "@mui/material/Divider";
-import Avatar from "@mui/material/Avatar";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import InputBase from "@mui/material/InputBase";
 import ListIcon from "@mui/icons-material/List";
 import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 import { useGlobalContext } from "../Context/store";
+import { CircleAvatar } from "./CircleAvatar";
 
 const SideNavbar = () => {
   const path = usePathname()?.slice(1); // remove the '/'
@@ -211,7 +210,7 @@ const SideNavbar = () => {
               href="/user"
             >
               <Box sx={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-                <Avatar alt="Username" src={user.avatar} />
+                <CircleAvatar id={user.id} owner={user.username} />
 
                 <Box>
                   <Typography variant="h6">{user.prefferedName}</Typography>

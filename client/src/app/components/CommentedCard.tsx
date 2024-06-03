@@ -16,6 +16,7 @@ import { Comment, MovieDetails } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { handleNoImage } from "../utils/imageUtils";
 import { formatDistanceToNow } from "date-fns";
+import { CircleAvatar } from "./CircleAvatar";
 
 const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
   const [movieDetails, setMovieDetails] = useState<MovieDetails>();
@@ -151,10 +152,7 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
                 gap: ".4rem",
               }}
             >
-              <Avatar
-                alt="commentOwner"
-                src="https://mui.com/static/images/avatar/1.jpg"
-              />
+               <CircleAvatar id={comment.owner_id} owner={comment.owner_user} />
               <Typography fontWeight={600}>{comment.owner_user}</Typography>
             </Box>
             <Button
