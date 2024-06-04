@@ -4,11 +4,13 @@ interface ErrorTypoProps {
 }
 
 export const ErrorTypo: React.FC<ErrorTypoProps> = ({ message }) => {
+  if (!message) {
+    return null; // Return null to render nothing if message is empty
+  }
+
   return (
-    message && (
-      <Typography variant="body2" color={"error"}>
-        {message}
-      </Typography>
-    )
+    <div>
+      {message} {/* Return a valid React element */}
+    </div>
   );
 };

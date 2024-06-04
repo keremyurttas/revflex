@@ -18,7 +18,7 @@ interface MovieCardProps {
   title: string;
   genres: string[];
   isLiked: boolean;
-  likeStatusChanged: (arg0: number) => void;
+  likeStatusChanged?: (arg0: number) => void;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -54,7 +54,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
         }
       );
       if (response.ok) {
-        if (newState == false) {
+        if (newState == false && likeStatusChanged) {
           likeStatusChanged(id);
         }
         setLocalIsLiked(newState);

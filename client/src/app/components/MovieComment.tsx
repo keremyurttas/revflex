@@ -9,7 +9,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
   deleteCommentLocal,
 }) => {
   const { user } = useGlobalContext();
-  const formattedDate = (date: number) => {
+  const formattedDate = (date: Date) => {
     return new Date(date)
       .toLocaleDateString("en-US", {
         month: "short", // Short month name (e.g., "May")

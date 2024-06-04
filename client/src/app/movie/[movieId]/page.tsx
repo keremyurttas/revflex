@@ -106,8 +106,8 @@ const Movie = () => {
     fetchMovieData();
   }, []);
 
-  const handleNewComment = (newComment: Comment) => {
-    setComments([newComment, ...comments]);
+  const handleNewComment = (newComment: Comment | void) => {
+    if (newComment) setComments([newComment, ...comments]);
   };
   const handleDeleteCommentLocal = (id: string) => {
     setComments(comments.filter((comment) => comment._id !== id));

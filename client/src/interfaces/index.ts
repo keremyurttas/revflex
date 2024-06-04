@@ -9,7 +9,7 @@ export interface Comment {
   date: Date;
 }
 export interface AddCommentProps {
-  onNewComment: (comment: Comment | void) => void;
+  onNewComment: (comment: void | Comment) => void;
 }
 export interface MovieCommentProps {
   deleteCommentLocal: (id: string) => void;
