@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 import { useGlobalContext } from "../Context/store";
 import { CircleAvatar } from "./CircleAvatar";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 const getTabFromPathname = (pathname: string) => {
   const tabValues = ["home", "liked", "rated"];
 
@@ -136,9 +137,14 @@ const SideNavbar = () => {
               paddingY: "1rem",
             }}
           >
-            <SearchIcon color="primary" />
+            {currentTab === "home" ? (
+              <SearchIcon color="primary" />
+            ) : (
+              <SearchOffIcon color="secondary" />
+            )}
 
             <InputBase
+              disabled={currentTab !== "home"}
               onChange={searchMovieByKey}
               inputProps={{
                 "aria-label": "search google maps", // Change label color here

@@ -65,15 +65,19 @@ const Rated = () => {
         >
           Liked Movies
         </Typography>
-        <Grid container spacing={2}>
-          {comments &&
-            comments.length > 0 &&
-            comments.map((comment) => (
+        {comments && comments.length > 0 ? (
+          <Grid container spacing={2}>
+            {comments.map((comment) => (
               <Grid item xs={12} sm={6} md={4} lg={12} xl={6} key={comment._id}>
                 <CommentedCard comment={comment} />
               </Grid>
             ))}
-        </Grid>
+          </Grid>
+        ) : (
+          <Typography sx={{ fontSize: "2rem" }}>
+            You haven't commented any movies yet.
+          </Typography>
+        )}
       </Container>
     </ThemeProvider>
   );

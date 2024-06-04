@@ -53,15 +53,19 @@ const Liked = () => {
           >
             Liked Movies
           </Typography>
-          <Grid container spacing={2}>
-            {likedMovies &&
-              likedMovies.length > 0 &&
-              likedMovies.map((movie) => (
+          {likedMovies && likedMovies?.length > 0 ? (
+            <Grid container spacing={2}>
+              {likedMovies.map((movie) => (
                 <Grid item xs={12} sm={6} md={4} lg={4} xl={3} key={movie.id}>
                   <MovieCard likeStatusChanged={handleDislike} {...movie} />
                 </Grid>
               ))}
-          </Grid>
+            </Grid>
+          ) : (
+            <Typography sx={{ fontSize: "2rem" }}>
+              You haven't liked any movies yet.
+            </Typography>
+          )}
         </Container>
       </ThemeProvider>
     </>

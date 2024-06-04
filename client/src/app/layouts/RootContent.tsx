@@ -23,7 +23,7 @@ export default function RootContent({ children }: RootContentProps) {
         open={activeModal === "signup"}
         onClose={() => setActiveModal("")}
       />
-      <div className="lg:flex lg:max-h-screen">
+      <div className="lg:flex lg:max-h-screen w-screen">
         <SideNavbar />
         <main className="lg:flex-1 lg:overflow-auto">{children}</main>
       </div>
