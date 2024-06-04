@@ -41,6 +41,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     id: "",
   });
   const [genres, setGenres] = useState<Genre[]>([]);
+  const BACKEND_URL = process.env.BACKEND_URL;
 
   const fetchGenres = useCallback(async () => {
     try {
@@ -111,7 +112,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
   const fetchUserDetails = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/user/info", {
+      const response = await fetch(`${BACKEND_URL}/auth/user/info`, {
         method: "GET",
 
         credentials: "include",
@@ -130,12 +131,9 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
   const getLikedMovies = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/${user.id}/liked`,
-        {
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/${user.id}/liked`, {
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -168,12 +166,9 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
   };
   const fetchRecentComments = useCallback(async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/recent-comments",
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/recent-comments`, {
+        method: "GET",
+      });
       if (response.ok) {
         const data = await response.json();
         setRecentComments(data);
@@ -190,7 +185,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
   ): Promise<Comment | null> => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/movies/${comment.movie_id}/comments`,
+        `${BACKEND_URL}/movies/${comment.movie_id}/comments`,
         {
           method: "POST",
           headers: {

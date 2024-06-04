@@ -16,7 +16,7 @@ const Rated = () => {
   const fetchCommentsByUserId = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/${user.id}/comments`,
+        `${process.env.BACKEND_URL}/${user.id}/comments`,
         {
           credentials: "include",
         }

@@ -72,7 +72,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const response = await fetch("http://localhost:8000/api/auth/login", {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

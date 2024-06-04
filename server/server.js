@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import express from "express";
-// import next from 'next'
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";

@@ -56,6 +56,7 @@ const User = () => {
   const { setUser } = useGlobalContext();
   const router = useRouter();
   const { user } = useGlobalContext();
+  const BACKEND_URL = process.env.BACKEND_URL;
   const defaultAvatar =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZVnsLhjbXRN_F--iLPPJ-ED7WP3qqfwhiAkNtgKsONg&s";
   const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(
@@ -64,7 +65,7 @@ const User = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   useEffect(() => {
     if (user.id) {
-      setAvatar(`http://localhost:8000/api/avatars/${user.id}`);
+      setAvatar(`${BACKEND_URL}/avatars/${user.id}`);
     }
   }, [user]);
 
@@ -104,14 +105,11 @@ const User = () => {
       formData.append("avatar", avatarFile);
 
       try {
-        const response = await fetch(
-          "http://localhost:8000/api/users/update-avatar",
-          {
-            method: "POST",
-            body: formData,
-            credentials: "include", // If you are using cookies for authentication
-          }
-        );
+        const response = await fetch(`${BACKEND_URL}/users/update-avatar`, {
+          method: "POST",
+          body: formData,
+          credentials: "include", // If you are using cookies for authentication
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -184,7 +182,7 @@ const User = () => {
   };
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/logout", {
+      const response = await fetch(`${BACKEND_URL}/auth/logout`, {
         method: "GET", // Assuming logout should be a POST request
         headers: {
           "Content-Type": "application/json",

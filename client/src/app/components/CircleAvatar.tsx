@@ -8,7 +8,7 @@ interface CircleAvatarProps {
 export const CircleAvatar: FC<CircleAvatarProps> = ({ id, owner }) => {
   return (
     <>
-      <Avatar alt={owner} src={`http://localhost:8000/api/avatars/${id}`}>
+      <Avatar alt={owner} src={`${process.env.BACKEND_URL}/avatars/${id}`}>
         {owner[0].toUpperCase()}
       </Avatar>
     </>
