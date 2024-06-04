@@ -1,6 +1,14 @@
 "use client";
 
-import { ContextProps, Genre, CommentDetails, Movie, User, LikedMovie } from "@/interfaces";
+import {
+  ContextProps,
+  Genre,
+  CommentDetails,
+  Movie,
+  User,
+  LikedMovie,
+  Comment,
+} from "@/interfaces";
 import {
   createContext,
   useContext,
@@ -123,33 +131,36 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
   const getLikedMovies = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/${user.id}/liked`
+        `http://localhost:8000/api/${user.id}/liked`,
+        {
+          credentials: "include",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const ids = await response.json();
-      console.log(ids.likedMoviesIds)
-      const likedMoviesPromises = ids.likedMoviesIds.map(async (likedMovie:LikedMovie) => {
-        const secResp = await fetch(
-          `https://api.themoviedb.org/3/movie/${likedMovie.movie_id}?api_key=0c1c779b65d0bbadb26f4d37ed5eda05`
-        );
-        if (!secResp.ok) {
-          throw new Error("Network response was not ok");
+      const likedMoviesPromises = ids.likedMoviesIds.map(
+        async (likedMovie: LikedMovie) => {
+          const secResp = await fetch(
+            `https://api.themoviedb.org/3/movie/${likedMovie.movie_id}?api_key=0c1c779b65d0bbadb26f4d37ed5eda05`
+          );
+          if (!secResp.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await secResp.json();
+          return {
+            id: data.id,
+            backdrop_path: data.backdrop_path,
+            title: data.title,
+            genres: data.genres.map((genre: Genre) => genre.name),
+            isLiked: true,
+          };
         }
-        const data = await secResp.json();
-        return {
-          id: data.id,
-          backdrop_path: data.backdrop_path,
-          title: data.title,
-          genres: data.genres.map((genre:Genre) => genre.name),
-          isLiked: true,
-        };
-      });
+      );
 
       const likedMovies = await Promise.all(likedMoviesPromises);
-      console.log(likedMovies); // You can use this data in your state or however needed
       return likedMovies;
     } catch (error) {
       console.error(error);
@@ -196,7 +207,6 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Comment submitted successfully:", data);
         return data; // Return the created comment
       } else {
         console.error("Failed to post a new comment:", response.statusText);

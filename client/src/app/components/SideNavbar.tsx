@@ -17,11 +17,21 @@ import CloseIcon from "@mui/icons-material/Close";
 import { usePathname } from "next/navigation";
 import { useGlobalContext } from "../Context/store";
 import { CircleAvatar } from "./CircleAvatar";
+const getTabFromPathname = (pathname: string) => {
+  const tabValues = ["home", "liked", "rated"];
 
+  const path = pathname.split("/")[1];
+  if (path === "") {
+    return "home";
+  }
+  return tabValues.includes(path) ? path : "";
+};
 const SideNavbar = () => {
-  const path = usePathname()?.slice(1); // remove the '/'
   // const validatedPath =path ? allowedPaths.includes(path) : path : null;
-  const [currentTab, setCurrentTab] = useState(path || "home");
+  const [currentTab, setCurrentTab] = useState(
+    getTabFromPathname(usePathname())
+  );
+
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [showNavbar, setShowNavbar] = useState(false);
   const [isSlideExitCompleted, setIsSlideExitCompleted] = useState(true);
@@ -141,7 +151,7 @@ const SideNavbar = () => {
           <Tabs
             orientation="vertical"
             variant="fullWidth"
-            value={currentTab}
+            value={currentTab || false}
             onChange={handleChange}
             TabIndicatorProps={{
               sx: {

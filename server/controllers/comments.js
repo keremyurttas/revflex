@@ -54,4 +54,14 @@ export const getRecentComments = async (req, res) => {
   }
 };
 
-
+export const getCommentsByUserId = async (req, res) => {
+  const { user_id } = req.params;
+  try {
+    const userComments = await Comment.find({ owner_id: user_id }).sort({
+      date: -1,
+    });
+    res.status(200).json([...userComments]);
+  } catch (error) {
+    res.status(500).json({ message: "An error occured", error });
+  }
+};

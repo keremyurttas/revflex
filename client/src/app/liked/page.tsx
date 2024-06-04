@@ -57,7 +57,7 @@ const Liked = () => {
             {likedMovies &&
               likedMovies.length > 0 &&
               likedMovies.map((movie) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={movie.id}>
+                <Grid item xs={12} sm={6} md={4} lg={4} xl={3} key={movie.id}>
                   <MovieCard likeStatusChanged={handleDislike} {...movie} />
                 </Grid>
               ))}

@@ -6,7 +6,7 @@ export interface Comment {
   rate: number | null;
   owner_user: string;
   owner_id: string;
-  date: number;
+  date: Date;
 }
 export interface AddCommentProps {
   onNewComment: (comment: Comment | void) => void;
