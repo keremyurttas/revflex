@@ -8,9 +8,9 @@ import router from "./routes/index.js";
 // const jwtSecret = process.env.JWT_SECRET;
 const corsOptions = {
   origin:
-    process.env.NODE_ENV === "production"
-      ? "https://revflix.vercel.app"
-      : "http://localhost:3000",
+    ["https://revflix.vercel.app",
+       "http://localhost:3000"],
+      
   credentials: true, // This is important for setting cookies
 };
 
