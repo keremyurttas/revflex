@@ -54,7 +54,10 @@ export const registerController = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
       maxAge: maxAge * 1000,
+      path: "/",
     });
 
     res.status(201).json({
@@ -91,10 +94,13 @@ export const loginController = async (req, res) => {
               expiresIn: maxAge,
             }
           );
-          res.cookie("jwt", token, {
-            httpOnly: true,
-            maxAge: maxAge * 1000, //3 hrs in ms
-          });
+       res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      maxAge: maxAge * 1000,
+      path: "/",
+    });
           res.status(201).json({
             message: "User successfully Logged in",
             user: user._id,
