@@ -63,7 +63,7 @@ const Rated = () => {
           color={theme.palette.text.primary}
           sx={{ textTransform: "uppercase", marginBottom: "1rem" }}
         >
-          Liked Movies
+          Rated / Commented Movies
         </Typography>
         {comments && comments.length > 0 ? (
           <Grid container spacing={2}>

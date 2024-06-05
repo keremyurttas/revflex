@@ -36,14 +36,16 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
       rate: rating,
     };
 
-    const createdComment = await createComment(newComment);
+    if (comment || rating) {
+      const createdComment = await createComment(newComment);
 
-    onNewComment(createdComment);
+      onNewComment(createdComment);
 
-    // Pass the created comment to the parent component
+      // Pass the created comment to the parent component
 
-    setComment("");
-    setRating(0);
+      setComment("");
+      setRating(0);
+    }
   };
 
   return (
@@ -53,13 +55,19 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
           marginTop: "2rem",
           padding: "2rem",
           borderRadius: "1rem",
-         
           background: "#080808",
         }}
       >
-        <Typography color={"primary"} sx={{[theme.breakpoints.down("lg")]:{
-          fontSize:'1.5rem'
-        }}} variant="h4" gutterBottom>
+        <Typography
+          color={"primary"}
+          sx={{
+            [theme.breakpoints.down("lg")]: {
+              fontSize: "1.5rem",
+            },
+          }}
+          variant="h4"
+          gutterBottom
+        >
           Add a Comment and Rating
         </Typography>
         <Box
@@ -73,7 +81,9 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
           autoComplete="off"
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <Typography color={"primary"} component="legend">Rate :</Typography>
+            <Typography color={"primary"} component="legend">
+              Rate :
+            </Typography>
             <Rating
               name="movie-rating"
               value={rating}
@@ -108,8 +118,12 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
             fullWidth
           />
 
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
+          <Button
+            variant="contained"
+            sx={{ color: theme.palette.primary.main }}
+            onClick={handleSubmit}
+          >
+            <Typography sx={{ color: "black" }}>Submit</Typography>
           </Button>
         </Box>
       </Box>

@@ -15,7 +15,7 @@ import {
   deleteComment,
   getCommentsByMovieId,
   getRecentComments,
-  getCommentsByUserId
+  getCommentsByUserId,
 } from "../controllers/comments.js";
 import { registerMiddleware } from "../middleware/register.js";
 import { authenticateToken } from "../middleware/authenticateToken.js";
@@ -37,10 +37,10 @@ router.post(
 );
 router.post("/auth/login", loginController);
 router.get("/auth/user/info", authenticateToken, getUserInformationsByToken);
-router.get("/auth/logout", logoutController);
+router.get("/auth/logout", authenticateToken, logoutController);
 router.post("/movies/:movie_id/comments", authenticateToken, createComment);
 router.get("/movies/:movie_id/comments", getCommentsByMovieId);
-router.get("/:user_id/comments", getCommentsByUserId);
+router.get("/:user_id/comments",authenticateToken, getCommentsByUserId);
 router.get("/recent-comments", getRecentComments);
 router.delete(
   "/movies/:movie_id/comments/:comment_id",
