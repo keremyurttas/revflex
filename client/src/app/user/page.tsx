@@ -164,18 +164,19 @@ const User = () => {
                 padding: "1rem",
                 background: theme.palette.text.primary,
                 borderRadius: 10,
+                cursor:"pointer"
               }}
             >
               <EditIcon sx={{ fontSize: "1.5rem" }} />
             </Box>
           </label>
           {avatarFile && (
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" color={"primary"} sx={{backgroundColor:"white"}}>
               Submit
             </Button>
           )}
         </form>
-        <Typography variant="body2" color="textSecondary">
+        <Typography variant="body2" color="secondary">
           {avatar ? "Change Image" : "Select an image to upload"}
         </Typography>
       </Box>

@@ -1,14 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-[type="button"],
-[type="reset"],
-[type="submit"],
-button {
-  -webkit-appearance: button;
-  background-color: none !important; /* or your preferred background color */
-  background-image: none !important;
-}
 
 @layer utilities {
   .text-balance {
@@ -31,4 +23,8 @@ button {
 .slick-dots li button:before {
   width: 5px !important; /* Set the width of the dot */
   height: 5px !important; /* Set the height of the dot */
+}
+
+button{
+  background-color: "white" !important;
 }

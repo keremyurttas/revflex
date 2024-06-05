@@ -227,6 +227,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
                   color="primary"
                   sx={{
                     color: theme.palette.secondary.main,
+                    backgroundColor:theme.palette.primary.main,
                     borderRadius: "10px",
                     paddingY: "1rem",
                     transition: "border-radius 0.3s ease",

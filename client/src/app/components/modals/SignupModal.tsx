@@ -336,6 +336,7 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
               variant="contained"
               color="primary"
               sx={{
+                backgroundColor:theme.palette.primary.main,
                 color: theme.palette.secondary.main,
                 borderRadius: "10px",
                 paddingY: "1rem",
