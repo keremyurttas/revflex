@@ -198,7 +198,7 @@ export const logoutController = (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "None",
-    maxAge: maxAge * 1000,
+    maxAge: 0,
     path: "/",
   });
 
