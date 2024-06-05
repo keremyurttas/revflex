@@ -189,7 +189,7 @@ const User = () => {
         },
         credentials: "include",
       });
-      console.log(response);
+
       if (response.ok) {
         // Clear the user state
         setUser({
@@ -201,6 +201,8 @@ const User = () => {
           id: "",
         });
         console.log("Logged out successfully");
+        document.cookie =
+          "user_id" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         router.push("/");
       } else {
         console.error("Failed to log out:", response.statusText);

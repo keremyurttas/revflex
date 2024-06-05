@@ -147,6 +147,8 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
 
         if (response.ok) {
           const data = await response.json();
+          document.cookie = `user_id=${data.user._id}`;
+
           setActiveModal(null);
           fetchUserDetails();
         } else {

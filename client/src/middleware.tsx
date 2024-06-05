@@ -6,18 +6,17 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
-  console.log("Request headers:", req.headers);
-  const token = req.cookies.get("jwt");
+  const token = req.cookies.get("user_id");
   console.log("Middleware check: JWT token", token);
 
-  // if (!token) {
-  //   const redirectUrl =
-  //     process.env.NODE_ENV === "production"
-  //       ? "https://revflix.vercel.app/"
-  //       : "http://localhost:3000/";
-  //   // console.log("No token found, redirecting to login page");
-  //   return NextResponse.redirect(redirectUrl);
-  // }
+  if (!token) {
+    const redirectUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://revflix.vercel.app/"
+        : "http://localhost:3000/";
+    // console.log("No token found, redirecting to login page");
+    return NextResponse.redirect(redirectUrl);
+  }
 
   // console.log("Token found, proceeding to the requested page");
   return NextResponse.next();

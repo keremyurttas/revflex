@@ -6,7 +6,7 @@
 [type="submit"],
 button {
   -webkit-appearance: button;
-  background-color: initial; /* or your preferred background color */
+  background-color: none; /* or your preferred background color */
   background-image: none;
 }
 

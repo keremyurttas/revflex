@@ -72,22 +72,25 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+        credentials: "include",
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();
       setActiveModal(null);
+      document.cookie = `user_id=${data.user}`;
       fetchUserDetails();
       setFormErrors((prevErrors) => ({
         ...prevErrors,
