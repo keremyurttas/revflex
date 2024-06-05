@@ -33,7 +33,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
   const { user } = useGlobalContext();
   const [localIsLiked, setLocalIsLiked] = useState<boolean>(isLiked);
   const [isLikeRequesting, setIsLikeRequesting] = useState<boolean>(false);
-
   useEffect(() => {
     setLocalIsLiked(isLiked);
   }, [isLiked]);
@@ -47,7 +46,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
     try {
       const response = await fetch(
-        `${process.env.BACKEND_URL}/${user.id}/liked/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.id}/liked/${id}`,
         {
           method: "PATCH",
           credentials: "include",

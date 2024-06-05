@@ -137,7 +137,7 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
       }
       try {
         const response = await fetch(
-          `${process.env.BACKEND_URL}/api/auth/register`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
           {
             method: "POST",
             body: formData,

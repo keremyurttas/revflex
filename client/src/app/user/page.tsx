@@ -56,7 +56,7 @@ const User = () => {
   const { setUser } = useGlobalContext();
   const router = useRouter();
   const { user } = useGlobalContext();
-  const BACKEND_URL = process.env.BACKEND_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
   const defaultAvatar =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZVnsLhjbXRN_F--iLPPJ-ED7WP3qqfwhiAkNtgKsONg&s";
   const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(

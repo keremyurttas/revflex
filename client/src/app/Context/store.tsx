@@ -41,7 +41,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     id: "",
   });
   const [genres, setGenres] = useState<Genre[]>([]);
-  const BACKEND_URL = process.env.BACKEND_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const fetchGenres = useCallback(async () => {
     try {

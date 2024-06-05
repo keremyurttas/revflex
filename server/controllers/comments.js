@@ -1,4 +1,4 @@
-import Comment from "../models/comment.js";
+import Comment from "../models/commentSchema.js";
 export const createComment = (req, res) => {
   const comment = new Comment(req.body);
 

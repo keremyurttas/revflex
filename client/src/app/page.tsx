@@ -11,6 +11,7 @@ import { Movie } from "@/interfaces";
 import Slider from "react-slick";
 
 const Page = () => {
+
   const {
     fetchPopularMovies,
     popularMovies,

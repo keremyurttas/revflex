@@ -28,7 +28,7 @@ const Movie = () => {
   const fetchCommentsByMovieId = async () => {
     try {
       const response = await fetch(
-        `${process.env.BACKEND_URL}/movies/${movieId}/comments`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/movies/${movieId}/comments`
       );
       if (response.ok) {
         const movieComments = await response.json();

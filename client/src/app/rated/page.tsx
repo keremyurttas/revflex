@@ -16,7 +16,7 @@ const Rated = () => {
   const fetchCommentsByUserId = async () => {
     try {
       const response = await fetch(
-        `${process.env.BACKEND_URL}/${user.id}/comments`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.id}/comments`,
         {
           credentials: "include",
         }

@@ -20,7 +20,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
   };
   const handleDelete = async () => {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/movies/${comment.movie_id}/comments/${comment._id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/movies/${comment.movie_id}/comments/${comment._id}`,
       {
         method: "DELETE",
         credentials: "include",
