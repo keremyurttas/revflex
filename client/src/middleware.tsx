@@ -6,8 +6,9 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
+  console.log("Request headers:", req.headers);
   const token = req.cookies.get("jwt");
-  // console.log("Middleware check: JWT token", token);
+  console.log("Middleware check: JWT token", token);
 
   if (!token) {
     const redirectUrl =

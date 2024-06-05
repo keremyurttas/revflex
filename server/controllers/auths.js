@@ -54,7 +54,7 @@ export const registerController = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "None",
       maxAge: maxAge * 1000,
       path: "/",
@@ -96,7 +96,7 @@ export const loginController = async (req, res) => {
           );
           res.cookie("jwt", token, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "None",
             maxAge: maxAge * 1000,
             path: "/",
@@ -196,7 +196,7 @@ export const logoutController = (req, res) => {
   // Clear the JWT cookie
   res.cookie("jwt", "", {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "None",
     maxAge: 0,
     path: "/",
