@@ -62,7 +62,7 @@ const Liked = () => {
               ))}
             </Grid>
           ) : (
-            <Typography sx={{ fontSize: "2rem" }}>
+            <Typography color={'primary'} sx={{ fontSize: "2rem" }}>
               You haven't liked any movies yet.
             </Typography>
           )}

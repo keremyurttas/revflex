@@ -131,8 +131,10 @@ const Movie = () => {
             maxWidth: "30%",
           },
         }}
+        
       >
         <Avatar
+
           sx={{
             width: "100%",
             height: "80%",
@@ -141,8 +143,8 @@ const Movie = () => {
           variant="square"
           src={`https://image.tmdb.org/t/p/w500/${cast.profile_path}`}
         />
-        <Typography>{cast.name}</Typography>
-        <Typography fontWeight={"bold"}>{cast.character}</Typography>
+        <Typography color={'primary'}>{cast.name}</Typography>
+        <Typography color={'primary'} fontWeight={"bold"}>{cast.character}</Typography>
       </Box>
     );
   };
@@ -213,6 +215,7 @@ const Movie = () => {
                   Summary
                 </Typography>
                 <Typography
+                color={'primary'}
                   sx={{ letterSpacing: ".2rem" }}
                   fontSize={20}
                   variant="body2"
@@ -243,6 +246,7 @@ const Movie = () => {
           </Box>
           <Box>
             <Typography
+            color={'primary'}
               sx={{
                 marginY: "1rem",
               }}
@@ -284,12 +288,13 @@ const Movie = () => {
             flexDirection: "column",
             gap: "2rem",
             marginY: "2rem",
+          
           }}
         >
           {user.id ? (
             <AddComment onNewComment={handleNewComment} />
           ) : (
-            <Typography>You must login to add a comment</Typography>
+            <Typography color={'primary'}>You must login to add a comment</Typography>
           )}
 
           {comments.length > 0 ? (
@@ -301,7 +306,7 @@ const Movie = () => {
               />
             ))
           ) : (
-            <Typography>No comments available.</Typography>
+            <Typography color={'primary'}>No comments available.</Typography>
           )}
         </Container>
       </ThemeProvider>

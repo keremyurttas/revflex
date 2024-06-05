@@ -103,6 +103,8 @@ const SideNavbar = () => {
             display: "flex",
             gap: "2rem",
             flexDirection: "column",
+            width:"30%"
+           
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -135,6 +137,10 @@ const SideNavbar = () => {
               paddingX: "1rem",
               gap: "1rem",
               paddingY: "1rem",
+              borderColor:theme.palette.text.primary,
+              [theme.breakpoints.down("lg")]:{
+                display:"none"
+              }
             }}
           >
             {currentTab === "home" ? (
@@ -222,6 +228,7 @@ const SideNavbar = () => {
                 marginBottom: "2rem",
                 textTransform: "none",
                 textAlign: "left",
+                
               }}
               href="/user"
             >
@@ -238,7 +245,9 @@ const SideNavbar = () => {
                   </Typography>
                 </Box>
               </Box>
+              <Box>
               <MoreHorizIcon />
+              </Box>
             </Button>
           ) : (
             <Button

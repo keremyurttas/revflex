@@ -47,15 +47,19 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
   };
 
   return (
-    <Container sx={{ background: "#080808" }} maxWidth="sm">
+    <Container sx={{ background: "" }} maxWidth="sm">
       <Box
         sx={{
           marginTop: "2rem",
           padding: "2rem",
           borderRadius: "1rem",
+         
+          background: "#080808",
         }}
       >
-        <Typography color={"primary"} variant="h4" gutterBottom>
+        <Typography color={"primary"} sx={{[theme.breakpoints.down("lg")]:{
+          fontSize:'1.5rem'
+        }}} variant="h4" gutterBottom>
           Add a Comment and Rating
         </Typography>
         <Box
@@ -69,7 +73,7 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
           autoComplete="off"
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <Typography component="legend">Rate :</Typography>
+            <Typography color={"primary"} component="legend">Rate :</Typography>
             <Rating
               name="movie-rating"
               value={rating}

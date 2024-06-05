@@ -55,7 +55,7 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
           height: "100%",
           bgcolor: "transparent",
           color: theme.palette.primary.main,
-          [theme.breakpoints.down("lg")]: {},
+       
           transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
           "&:hover": {
             transform: "scale(1.05)",
@@ -63,6 +63,12 @@ const CommentedCard: React.FC<{ comment: Comment }> = ({ comment }) => {
             "& .hover-button": {
               color: "red",
             },
+          },
+          [theme.breakpoints.down("lg")]: {
+            "&:hover": {
+              transform: "none",
+              transition:"none"
+            }
           },
         }}
       >

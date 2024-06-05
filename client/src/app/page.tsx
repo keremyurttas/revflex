@@ -9,7 +9,8 @@ import { useGlobalContext } from "./Context/store";
 import { useEffect, useState } from "react";
 import { Movie } from "@/interfaces";
 import Slider from "react-slick";
-
+import SearchIcon from "@mui/icons-material/Search";
+import InputBase from "@mui/material/InputBase";
 const Page = () => {
   const {
     fetchPopularMovies,
@@ -17,9 +18,9 @@ const Page = () => {
     recentComments,
     fetchRecentComments,
     searchResults,
+    searchMovieByKey
   } = useGlobalContext();
   const [moviesLoaded, setMoviesLoaded] = useState(false);
-
   const commentsSliderSettings = {
     infinite: true,
     speed: 500,
@@ -41,9 +42,9 @@ const Page = () => {
   const moviesSliderContainer = {
     infinite: true,
     speed: 500,
-    slidesToShow: 5,
+    slidesToShow: 4,
     dots: true,
-    slidesToScroll: 5,
+    slidesToScroll: 4,
     arrows: false,
 
     responsive: [
@@ -119,6 +120,34 @@ const Page = () => {
             height: "100vh",
           }}
         >
+          <Box
+            sx={{
+              display: "none",
+              alignItems: "center",
+              border: ".2px solid",
+              borderRadius: "10px",
+              paddingX: "1rem",
+              gap: "1rem",
+              paddingY: "1rem",
+              marginBottom:"2rem",
+              borderColor:theme.palette.text.primary,
+              [theme.breakpoints.down("lg")]:{
+                display:"flex"
+              }
+            }}
+          >
+            
+              <SearchIcon color="primary" />
+         
+           
+
+            <InputBase
+              onChange={searchMovieByKey}
+             
+              placeholder="Search"
+              sx={{ color: "white" }}
+            ></InputBase>
+          </Box>
           <Box sx={{ marginBottom: "4rem", position: "relative" }}>
             <Typography
               variant="h6"

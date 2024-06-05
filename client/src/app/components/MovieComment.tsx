@@ -62,7 +62,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
               Delete
             </Button>
           )}
-          <Typography variant="body2">{formattedDate(comment.date)}</Typography>
+          <Typography color={'primary'} variant="body2">{formattedDate(comment.date)}</Typography>
         </Box>
       </Box>
       <Box>
@@ -83,6 +83,7 @@ export const MovieComment: React.FC<MovieCommentProps> = ({
             overflowWrap: "break-word",
             whiteSpace: "normal",
           }}
+          color={'primary'}
         >
           {comment.text}
         </Typography>

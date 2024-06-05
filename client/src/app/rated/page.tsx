@@ -74,7 +74,7 @@ const Rated = () => {
             ))}
           </Grid>
         ) : (
-          <Typography sx={{ fontSize: "2rem" }}>
+          <Typography color={'primary'} sx={{ fontSize: "2rem" }}>
             You haven't commented any movies yet.
           </Typography>
         )}
