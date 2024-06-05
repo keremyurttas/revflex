@@ -55,7 +55,7 @@ export const registerController = async (req, res, next) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      sameSite: "None",
       maxAge: maxAge * 1000,
       path: "/",
     });
@@ -195,10 +195,11 @@ export const getAvatarById = async (req, res) => {
 export const logoutController = (req, res) => {
   // Clear the JWT cookie
   res.cookie("jwt", "", {
-    maxAge: 1,
-    httpOnly: true, // Helps prevent cross-site scripting (XSS) attacks
-    secure: process.env.NODE_ENV === "production", // Ensures cookie is sent only over HTTPS in production
-    sameSite: "strict", // Helps prevent cross-site request forgery (CSRF) attacks
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: maxAge * 1000,
+    path: "/",
   });
 
   // Send a JSON response
