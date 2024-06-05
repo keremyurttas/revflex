@@ -7,7 +7,7 @@ import router from "./routes/index.js";
 
 // const jwtSecret = process.env.JWT_SECRET;
 const corsOptions = {
-  origin: "https://revflix.vercel.app", // Change to your frontend URL
+  origin: ["http://localhost:3000", "https://revflix.vercel.app"],
   credentials: true, // This is important for setting cookies
 };
 
