@@ -6,8 +6,8 @@
 [type="submit"],
 button {
   -webkit-appearance: button;
-  background-color: none; /* or your preferred background color */
-  background-image: none;
+  background-color: none !important; /* or your preferred background color */
+  background-image: none !important;
 }
 
 @layer utilities {
