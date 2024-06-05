@@ -120,7 +120,7 @@ export const AddComment: React.FC<AddCommentProps> = ({ onNewComment }) => {
 
           <Button
             variant="contained"
-            sx={{ color: theme.palette.primary.main }}
+            sx={{ backgroundColor: theme.palette.primary.main }}
             onClick={handleSubmit}
           >
             <Typography sx={{ color: "black" }}>Submit</Typography>
