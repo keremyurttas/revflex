@@ -552,8 +552,7 @@ const SignupModal: FC<SignupModalProps> = ({ open, onClose }) => {
               paddingX: "7rem",
               paddingY: "5rem",
               display: "grid",
-              rowGap: "3rem",
-              height: "70vh",
+              rowGap: "1rem",
               width: "35vw",
               [theme.breakpoints.down("lg")]: {
                 paddingX: "2rem",
