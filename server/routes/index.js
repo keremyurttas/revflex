@@ -37,7 +37,7 @@ router.post(
 );
 router.post("/auth/login", loginController);
 router.get("/auth/user/info", authenticateToken, getUserInformationsByToken);
-router.get("/auth/logout", authenticateToken, logoutController);
+router.get("/auth/logout", logoutController);
 router.post("/movies/:movie_id/comments", authenticateToken, createComment);
 router.get("/movies/:movie_id/comments", getCommentsByMovieId);
 router.get("/:user_id/comments", getCommentsByUserId);
