@@ -26,6 +26,7 @@ const LoadingModal: FC<LoadingModalProps> = ({ open }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              outline: "none",
 
               [theme.breakpoints.down("lg")]: {
                 paddingX: "2rem",
