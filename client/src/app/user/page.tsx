@@ -71,6 +71,7 @@ const User = () => {
 
   const ImageInput = () => {
     const getAvatarSrc = (): string | undefined => {
+      console.log(avatar);
       if (avatar === null) {
         return defaultAvatar;
       }

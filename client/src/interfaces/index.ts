@@ -86,6 +86,7 @@ export interface ContextProps {
   createComment: (commentDetails: CommentDetails) => void;
   recentComments: Comment[];
   getLikedMovies: () => Promise<any[] | undefined>;
+  isLoading: boolean;
 }
 export interface MovieDetails {
   posterPath: string;

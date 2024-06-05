@@ -103,8 +103,7 @@ const SideNavbar = () => {
             display: "flex",
             gap: "2rem",
             flexDirection: "column",
-            width:"30%"
-           
+            width: "30%",
           }}
         >
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -137,10 +136,10 @@ const SideNavbar = () => {
               paddingX: "1rem",
               gap: "1rem",
               paddingY: "1rem",
-              borderColor:theme.palette.text.primary,
-              [theme.breakpoints.down("lg")]:{
-                display:"none"
-              }
+              borderColor: theme.palette.text.primary,
+              [theme.breakpoints.down("lg")]: {
+                display: "none",
+              },
             }}
           >
             {currentTab === "home" ? (
@@ -197,6 +196,11 @@ const SideNavbar = () => {
               value="liked"
               sx={{
                 color: "white",
+                "&.Mui-disabled": {
+                  opacity: 0.3,
+                  pointerEvents: "none",
+                  color: "white",
+                },
                 justifyContent: "start",
                 gap: "1rem",
                 marginBottom: ".5rem",
@@ -205,14 +209,25 @@ const SideNavbar = () => {
               iconPosition="start"
               label="Liked"
               href="/liked"
+              disabled={user.username ? false : true}
             />
             <Tab
               value="rated"
-              sx={{ color: "white", justifyContent: "start", gap: "1rem" }}
+              sx={{
+                color: "white",
+                justifyContent: "start",
+                gap: "1rem",
+                "&.Mui-disabled": {
+                  opacity: 0.3,
+                  pointerEvents: "none",
+                  color: "white",
+                },
+              }}
               icon={<ThumbsUpDownIcon />}
               iconPosition="start"
               label="Rated / Commented"
               href="rated"
+              disabled={user.username ? false : true}
             />
           </Tabs>
 
@@ -228,7 +243,6 @@ const SideNavbar = () => {
                 marginBottom: "2rem",
                 textTransform: "none",
                 textAlign: "left",
-                
               }}
               href="/user"
             >
@@ -246,7 +260,7 @@ const SideNavbar = () => {
                 </Box>
               </Box>
               <Box>
-              <MoreHorizIcon />
+                <MoreHorizIcon />
               </Box>
             </Button>
           ) : (

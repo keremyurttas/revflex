@@ -11,6 +11,7 @@ import { Movie } from "@/interfaces";
 import Slider from "react-slick";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
+import CircularProgress from '@mui/material/CircularProgress';
 const Page = () => {
   const {
     fetchPopularMovies,
@@ -136,7 +137,7 @@ const Page = () => {
               }
             }}
           >
-            
+          
               <SearchIcon color="primary" />
          
            

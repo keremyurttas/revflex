@@ -40,19 +40,23 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     avatar: "",
     id: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [genres, setGenres] = useState<Genre[]>([]);
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const fetchGenres = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(
         `https://api.themoviedb.org/3/genre/movie/list?api_key=0c1c779b65d0bbadb26f4d37ed5eda05&language=en-US`
       );
       if (response.ok) {
         const data = await response.json();
         setGenres(data.genres);
+        setIsLoading(false);
       } else {
         console.error("Failed to fetch genres:", response.statusText);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("An error occurred while fetching genres:", error);
@@ -71,6 +75,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
   // };
   const fetchPopularMovies = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(
         "https://api.themoviedb.org/3/movie/popular?api_key=0c1c779b65d0bbadb26f4d37ed5eda05",
         {
@@ -105,6 +110,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       } else {
         console.error("Failed to fetch popular movies:", response.statusText);
       }
+      setIsLoading(false);
     } catch (error) {
       console.error("An error occurred while fetching popular movies:", error);
     }
@@ -112,6 +118,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
   const fetchUserDetails = useCallback(async () => {
     try {
+      setIsLoading(true)
       const response = await fetch(`${BACKEND_URL}/auth/user/info`, {
         method: "GET",
 
@@ -124,6 +131,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       } else {
         console.error("Failed to fetch user details:", response.statusText);
       }
+      setIsLoading(false)
     } catch (error) {
       console.error("An error occurred while fetching user details:", error);
     }
@@ -131,6 +139,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
 
   const getLikedMovies = async () => {
     try {
+      setIsLoading(true)
       const response = await fetch(`${BACKEND_URL}/${user.id}/liked`, {
         credentials: "include",
       });
@@ -159,6 +168,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       );
 
       const likedMovies = await Promise.all(likedMoviesPromises);
+      setIsLoading(false)
       return likedMovies;
     } catch (error) {
       console.error(error);
@@ -166,6 +176,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
   };
   const fetchRecentComments = useCallback(async () => {
     try {
+      setIsLoading(true)
       const response = await fetch(`${BACKEND_URL}/recent-comments`, {
         method: "GET",
       });
@@ -175,6 +186,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
       } else {
         console.error("Failed to fetch recent comments", response.statusText);
       }
+      setIsLoading(false)
     } catch (error) {
       console.error("An error occured while fetching recent comments", error);
     }
@@ -184,6 +196,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
     comment: CommentDetails
   ): Promise<Comment | null> => {
     try {
+      setIsLoading(true)
       const response = await fetch(
         `${BACKEND_URL}/movies/${comment.movie_id}/comments`,
         {
@@ -199,7 +212,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
           credentials: "include",
         }
       );
-
+      setIsLoading(false)
       if (response.ok) {
         const data = await response.json();
         return data; // Return the created comment
@@ -207,6 +220,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         console.error("Failed to post a new comment:", response.statusText);
         return null;
       }
+   
     } catch (error) {
       console.error("An error occurred while posting a new comment:", error);
       return null;
@@ -263,6 +277,7 @@ export const GlobalContextProvider = ({ children }: RootContentProps) => {
         recentComments,
         searchMovieByKey,
         getLikedMovies,
+        isLoading,
       }}
     >
       {children}
